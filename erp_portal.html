@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" href="favicon.png?v=3">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#0d1117; --bg2:#090c10; --card:#161b22; --bg3:#121821;
@@ -590,8 +591,8 @@ function resetConfig(){
   loadModules(); saveModules(); renderManager(); renderSidebar(); renderHome();
 }
 
-// ── Başlangıç ──
-(function init(){
+// ── Portal başlat (giriş onaylandıktan sonra çağrılır) ──
+function bootPortal(){
   const th=localStorage.getItem(LS_THEME)||'dark';
   document.documentElement.setAttribute('data-theme',th);
   document.documentElement.setAttribute('data-bs-theme',th);
@@ -603,6 +604,154 @@ function resetConfig(){
   _mgrModal=new bootstrap.Modal(document.getElementById('mgrModal'));
   _editModal=new bootstrap.Modal(document.getElementById('editModal'));
   renderSidebar(); renderHome();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  GİRİŞ + ONAY  (Supabase — ERP'ye özel proje)
+// ══════════════════════════════════════════════════════════════
+const ERP_SB_URL = 'https://chchaielttnimuuezazb.supabase.co';
+const ERP_SB_KEY = 'sb_publishable_S2ywbq7TkgcZKiVif3td-A_oAuQL3QT';
+let _sb=null, _me=null, _booted=false, _authMode='login';
+
+function _gateHtml(){
+  return `
+  <div id="authGate" style="position:fixed;inset:0;z-index:3000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1rem">
+    <div style="width:100%;max-width:400px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.6rem">
+      <div style="text-align:center;margin-bottom:1.2rem">
+        <img src="SanifoamLogo-Transparent.png" style="height:34px" onerror="this.style.display='none'">
+        <div style="font-weight:700;font-size:1.15rem;margin-top:.5rem">Sanifoam ERP Portal</div>
+        <div id="authSub" style="color:var(--muted);font-size:.82rem">Devam etmek için giriş yapın</div>
+      </div>
+      <div id="authForm">
+        <input id="authEmail" type="email" class="form-control mb-2" placeholder="E-posta" autocomplete="email">
+        <input id="authPass" type="password" class="form-control mb-2" placeholder="Şifre (en az 6 karakter)" autocomplete="current-password" onkeydown="if(event.key==='Enter')authSubmit()">
+        <div id="authMsg" style="font-size:.8rem;min-height:1.1rem;margin-bottom:.4rem"></div>
+        <button id="authPrimary" class="btn btn-primary w-100 mb-2" onclick="authSubmit()">Giriş Yap</button>
+        <div style="text-align:center;font-size:.82rem;color:var(--muted)">
+          <span id="authToggleTxt">Hesabın yok mu?</span>
+          <a href="#" id="authToggleLink" onclick="authToggle();return false" style="color:var(--blue)">Kayıt ol</a>
+        </div>
+      </div>
+      <div id="authPending" style="display:none;text-align:center">
+        <i class="bi bi-hourglass-split" style="font-size:2rem;color:var(--orange)"></i>
+        <p style="margin:.8rem 0;font-size:.9rem">Kaydın alındı. <b>Yönetici onayı</b> bekleniyor.<br>Onaylanınca sayfayı yenileyip girebilirsin.</p>
+        <button class="btn btn-outline-secondary btn-sm me-2" onclick="afterAuth()">Yenile</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="authLogout()">Çıkış</button>
+      </div>
+    </div>
+  </div>`;
+}
+function authToggle(){
+  _authMode = _authMode==='login'?'register':'login';
+  document.getElementById('authPrimary').textContent = _authMode==='login'?'Giriş Yap':'Kayıt Ol';
+  document.getElementById('authSub').textContent = _authMode==='login'?'Devam etmek için giriş yapın':'Yeni hesap oluştur';
+  document.getElementById('authToggleTxt').textContent = _authMode==='login'?'Hesabın yok mu?':'Zaten hesabın var mı?';
+  document.getElementById('authToggleLink').textContent = _authMode==='login'?'Kayıt ol':'Giriş yap';
+  document.getElementById('authMsg').textContent='';
+}
+function _authMsg(t,err){ const e=document.getElementById('authMsg'); if(!e)return; e.textContent=t; e.style.color=err?'var(--red)':'var(--green)'; }
+function _trErr(m){
+  m=''+m;
+  if(/Invalid login/i.test(m)) return 'E-posta veya şifre hatalı.';
+  if(/already registered|already been registered|exists/i.test(m)) return 'Bu e-posta zaten kayıtlı. Giriş yapın.';
+  if(/at least 6|password should be/i.test(m)) return 'Şifre en az 6 karakter olmalı.';
+  if(/Email not confirmed/i.test(m)) return 'E-posta doğrulanmamış.';
+  return m;
+}
+async function authSubmit(){
+  const email=document.getElementById('authEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('authPass').value;
+  if(!email||!pass){ _authMsg('E-posta ve şifre gerekli.',true); return; }
+  const btn=document.getElementById('authPrimary'); btn.disabled=true;
+  try{
+    if(_authMode==='register'){
+      const {error}=await _sb.auth.signUp({email,password:pass}); if(error) throw error;
+    } else {
+      const {error}=await _sb.auth.signInWithPassword({email,password:pass}); if(error) throw error;
+    }
+    await afterAuth();
+  }catch(e){ _authMsg(_trErr(e.message||e),true); }
+  btn.disabled=false;
+}
+async function authLogout(){ try{ await _sb.auth.signOut(); }catch(e){} location.reload(); }
+window.authToggle=authToggle; window.authSubmit=authSubmit; window.authLogout=authLogout;
+
+async function afterAuth(){
+  const {data:{user}}=await _sb.auth.getUser();
+  if(!user){ _showLogin(); return; }
+  let {data:row}=await _sb.from('erp_users').select('*').eq('id',user.id).maybeSingle();
+  if(!row){
+    try{ await _sb.from('erp_users').insert({id:user.id,email:user.email}); }catch(e){}
+    ({data:row}=await _sb.from('erp_users').select('*').eq('id',user.id).maybeSingle());
+  }
+  _me=row||{id:user.id,email:user.email,approved:false,is_admin:false};
+  if(_me.approved) _enterPortal(); else _showPending();
+}
+window.afterAuth=afterAuth;
+function _showLogin(){ const g=document.getElementById('authGate'); if(g){ g.style.display='flex'; document.getElementById('authForm').style.display=''; document.getElementById('authPending').style.display='none'; document.getElementById('authSub').textContent='Devam etmek için giriş yapın'; } }
+function _showPending(){ const g=document.getElementById('authGate'); if(g){ g.style.display='flex'; document.getElementById('authForm').style.display='none'; document.getElementById('authPending').style.display=''; document.getElementById('authSub').textContent='Onay bekleniyor'; } }
+function _enterPortal(){
+  const g=document.getElementById('authGate'); if(g) g.remove();
+  if(!_booted){ _booted=true; bootPortal(); injectAuthUI(); }
+}
+function injectAuthUI(){
+  const foot=document.querySelector('.sb-footer');
+  if(foot && !document.getElementById('logoutBtn')){
+    const b=document.createElement('button'); b.id='logoutBtn'; b.title='Çıkış ('+(_me.email||'')+')';
+    b.innerHTML='<i class="bi bi-box-arrow-right"></i>'; b.onclick=authLogout; foot.appendChild(b);
+  }
+  if(_me.is_admin && foot && !document.getElementById('approveBtn')){
+    const b=document.createElement('button'); b.id='approveBtn'; b.title='Kullanıcı Onayları';
+    b.innerHTML='<i class="bi bi-person-check-fill"></i>'; b.onclick=openApprovals; foot.appendChild(b);
+  }
+}
+function openApprovals(){
+  closeMobile();
+  let host=document.getElementById('approveModal');
+  if(!host){
+    host=document.createElement('div'); host.className='modal fade'; host.id='approveModal'; host.tabIndex=-1;
+    host.innerHTML=`<div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title"><i class="bi bi-person-check-fill me-2"></i>Kullanıcı Onayları</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body" id="approveBody">Yükleniyor…</div></div></div>`;
+    document.body.appendChild(host);
+  }
+  new bootstrap.Modal(host).show();
+  renderApprovals();
+}
+async function renderApprovals(){
+  const body=document.getElementById('approveBody');
+  const {data:rows,error}=await _sb.from('erp_users').select('*').order('created_at',{ascending:false});
+  if(error){ body.innerHTML='<div style="color:var(--red)">Liste alınamadı: '+error.message+'</div>'; return; }
+  const pend=rows.filter(r=>!r.approved), appr=rows.filter(r=>r.approved);
+  const rowHtml=(r,isAppr)=>`<div class="mgr-row" style="grid-template-columns:1fr auto">
+    <div style="min-width:0"><div class="nm">${r.email||r.id} ${r.is_admin?'<span style="color:var(--blue)">(admin)</span>':''}</div>
+    <div class="sub">${r.created_at?new Date(r.created_at).toLocaleString('tr-TR'):''}</div></div>
+    <div class="mgr-act">${isAppr
+      ? (r.id===_me.id?'<span style="color:var(--muted);font-size:.78rem">sen</span>':`<button onclick="setApprove('${r.id}',false)">Kaldır</button>`)
+      : `<button onclick="setApprove('${r.id}',true)" style="border-color:var(--green);color:var(--green)"><i class="bi bi-check-lg"></i> Onayla</button>`}</div></div>`;
+  body.innerHTML =
+    `<div class="sb-cat" style="padding-left:0">⏳ Bekleyenler (${pend.length})</div>`+
+    (pend.length?pend.map(r=>rowHtml(r,false)).join(''):'<div style="color:var(--muted);font-size:.82rem;margin:.3rem 0 .6rem">Bekleyen yok</div>')+
+    `<div class="sb-cat" style="padding-left:0;margin-top:1rem">✅ Onaylılar (${appr.length})</div>`+
+    appr.map(r=>rowHtml(r,true)).join('');
+}
+async function setApprove(id,val){
+  const {error}=await _sb.from('erp_users').update({approved:val}).eq('id',id);
+  if(error){ alert('Hata: '+error.message); return; }
+  renderApprovals();
+}
+window.openApprovals=openApprovals; window.setApprove=setApprove;
+
+// ── Açılış: önce giriş kapısı ──
+(async function(){
+  document.body.insertAdjacentHTML('beforeend', _gateHtml());
+  if(!(window.supabase && window.supabase.createClient)){ _authMsg('Supabase yüklenemedi (internet?).',true); return; }
+  _sb = window.supabase.createClient(ERP_SB_URL, ERP_SB_KEY, {auth:{persistSession:true, autoRefreshToken:true}});
+  try{
+    const {data:{session}}=await _sb.auth.getSession();
+    if(session) await afterAuth(); else _showLogin();
+  }catch(e){ _showLogin(); }
 })();
 </script>
 </body>
