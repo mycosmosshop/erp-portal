@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalibrasyon Takip Sistemi</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="./assets/manifest-B0biJwJz.json">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="./assets/icon-192-CENGu_qc.svg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/"
+  }
+}
+</script>
+  <script type="module" crossorigin src="./assets/index-DuUwR20v.js"></script>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900">
+    <div id="root"></div>
+    <script>
+      (async () => {
+        'use strict';
+        // --- Gelişmiş Service Worker Kayıt Mantığı ---
+        
+        // 1. Tarayıcı desteğini kontrol et.
+        if (!('serviceWorker' in navigator)) {
+          console.log('Service Worker bu tarayıcı tarafından desteklenmiyor.');
+          return;
+        }
+
+        // 2. SW'nin devre dışı bırakılacağı ortamları belirle.
+        const isLocalhost = ['localhost', '127.0.0.1'].includes(location.hostname);
+        if (location.protocol === 'file:' || (location.protocol === 'http:' && !isLocalhost)) {
+          console.warn('Service Worker bu ortam için devre dışı bırakıldı (file protocol veya localhost olmayan http).');
+          window.__SW_DISABLED__ = true;
+          return;
+        }
+        
+        try {
+          // 3. Çakışmaları önlemek için farklı kökenlerden (origin) gelen eski SW'leri kaldır.
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            if (registration.active) {
+              try {
+                const scriptURL = new URL(registration.active.scriptURL);
+                if (scriptURL.origin !== location.origin) {
+                  console.log('Farklı kökenden gelen eski service worker kaydı siliniyor:', scriptURL.origin);
+                  await registration.unregister();
+                }
+              } catch (e) {
+                 console.warn('Eski bir kayıt için scriptURL ayrıştırılamadı, silme işlemi atlanıyor.', e);
+              }
+            }
+          }
+
+          // 4. Yeni service worker'ı kaydet.
+          const swUrl = new URL('sw.js', location.origin);
+          const reg = await navigator.serviceWorker.register(swUrl);
+          
+          // Kayıt nesnesini, uygulamanın kullanabilmesi için global olarak erişilebilir yap.
+          window.__SW_REGISTRATION__ = reg;
+          
+          // 5. Güncellemeleri dinle.
+          reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            if (installingWorker) {
+              installingWorker.onstatechange = () => {
+                // Yeni worker yüklendiğinde ve sayfayı kontrol eden eski bir worker varsa...
+                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('Yeni bir sürüm mevcut. Güncellemeye hazır.');
+                  // React uygulamasının "Güncelle" butonu göstermesi için global bir işaret ayarla.
+                  window.__SW_HAS_UPDATE__ = true;
+                }
+              };
+            }
+          };
+        } catch (error) {
+          console.warn('Service Worker kaydı başarısız oldu:', error);
+        }
+      })();
+    </script>
+</body>
+</html>
