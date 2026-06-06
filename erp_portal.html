@@ -276,7 +276,7 @@ const DEFAULT_MODULES = [
     ikon:'bi-rulers', renk:'#26c6da', kategori:'Bakım', kaynak:'modules/kalibrasyon/index.html', roller:['*'], yeniSekme:false, aktif:true },
 
   { id:'kalitekontrol', ad:'Kalite Kontrol', aciklama:'Seri başı / proses / son kontrol kayıt sistemi.',
-    ikon:'bi-clipboard2-check-fill', renk:'#66bb6a', kategori:'Kalite', kaynak:'modules/kalite-kontrol/index.html', roller:['*'], yeniSekme:false, aktif:true },
+    ikon:'bi-clipboard2-check-fill', renk:'#66bb6a', kategori:'Kalite', kaynak:'https://mycosmosshop.github.io/kalite-kontrol/', roller:['*'], yeniSekme:false, aktif:true },
 
   { id:'teknikresim', ad:'Teknik Resim Balonlama', aciklama:'Teknik resim balonlama / ölçü çıkarma (OCR).',
     ikon:'bi-vector-pen', renk:'#ab47bc', kategori:'Araçlar', kaynak:'modules/teknik-resim/index.html', roller:['*'], yeniSekme:false, aktif:true },
@@ -296,10 +296,19 @@ function loadModules(){
   if(!Array.isArray(saved)){
     modules=DEFAULT_MODULES.map(m=>({...m}));
   }else{
-    modules=saved.map(m=>({...m}));
+    // Kayıtlı listeyi al; YERLEŞİK modüllerin kod-kontrollü alanlarını (adres/görsel) koddan tazele.
+    // Kullanıcı tercihleri (aç/kapa, sıra, favori) korunur. Panelden elle düzenlenenler (_custom) dokunulmaz.
+    modules=saved.map(m=>{
+      const d=DEFAULT_MODULES.find(x=>x.id===m.id);
+      if(d && !m._custom){
+        return {...m, kaynak:d.kaynak, ad:d.ad, aciklama:d.aciklama, ikon:d.ikon, renk:d.renk, kategori:d.kategori, roller:d.roller};
+      }
+      return {...m};
+    });
     // Kodda eklenen YENİ varsayılanları (kullanıcı silmediyse) sona ekle
     const have=new Set(modules.map(m=>m.id));
     DEFAULT_MODULES.forEach(d=>{ if(!have.has(d.id) && !del.includes(d.id)) modules.push({...d}); });
+    saveModules();
   }
 }
 function saveModules(){ localStorage.setItem(LS_MODS, JSON.stringify(modules)); }
@@ -553,7 +562,7 @@ function saveEdit(){
     yeniSekme:document.getElementById('fYeniSekme').checked
   };
   const id=document.getElementById('fId').value;
-  if(id){ const m=modules.find(x=>x.id===id); Object.assign(m,obj); }
+  if(id){ const m=modules.find(x=>x.id===id); Object.assign(m,obj); m._custom=true; }
   else { obj.id=slugify(ad); if(modules.some(x=>x.id===obj.id)) obj.id+='-'+Date.now().toString(36); modules.push(obj); }
   saveModules(); _editModal.hide(); renderManager(); renderSidebar(); renderHome();
 }
