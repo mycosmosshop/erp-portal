@@ -82,7 +82,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .cat-title:first-child{margin-top:0}
 
 /* ── Frames ── */
-#frameHost{position:absolute;inset:0}
+#frameHost{position:absolute;inset:0;display:none}
 .frame-wrap{position:absolute;inset:0;display:none}
 .frame-wrap.show{display:block}
 .frame-wrap iframe{width:100%;height:100%;border:0;background:var(--bg)}
@@ -388,6 +388,7 @@ function launch(id){
   if(m.yeniSekme){ window.open(m.kaynak,'_blank','noopener'); return; }
   currentId=id;
   document.getElementById('home').style.display='none';
+  document.getElementById('frameHost').style.display='block';
   // mevcut frame var mı?
   let wrap=document.querySelector(`.frame-wrap[data-mid="${id}"]`);
   if(!wrap){
@@ -414,6 +415,7 @@ function launch(id){
 function goHome(){
   currentId=null;
   document.querySelectorAll('.frame-wrap').forEach(w=>w.classList.remove('show'));
+  document.getElementById('frameHost').style.display='none';
   document.getElementById('home').style.display='';
   document.getElementById('tbTitle').innerHTML='<i class="bi bi-grid-1x2-fill"></i><span>Ana Ekran</span>';
   ['tbReload','tbNew','tbFull'].forEach(i=>document.getElementById(i).style.display='none');
