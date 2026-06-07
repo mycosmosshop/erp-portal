@@ -15,6 +15,8 @@
   function deny(){ try{ location.replace(PORTAL); }catch(e){ location.href = PORTAL; } }
   function allow(){ try{ de.style.visibility = ''; }catch(e){} }
   function check(){
+    // Modül kendi istisnasını tanımladıysa (ör. supplier paylaşım linkleri) girişsiz geç
+    try{ if(typeof window.ERP_GUARD_ALLOW === 'function' && window.ERP_GUARD_ALLOW()){ return allow(); } }catch(e){}
     if(!(window.supabase && window.supabase.createClient)){ return deny(); }
     var sb;
     try{ sb = window.supabase.createClient(SUPA_URL, SUPA_KEY); }catch(e){ return deny(); }
