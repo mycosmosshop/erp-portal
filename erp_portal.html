@@ -667,6 +667,9 @@ function _gateHtml(){
           <span id="authToggleTxt">Hesabın yok mu?</span>
           <a href="#" id="authToggleLink" onclick="authToggle();return false" style="color:var(--blue)">Kayıt ol</a>
         </div>
+        <div style="text-align:center;font-size:.8rem;margin-top:.5rem">
+          <a href="#" id="authForgotLink" onclick="authForgot();return false" style="color:var(--muted)">Şifremi unuttum</a>
+        </div>
       </div>
       <div id="authPending" style="display:none;text-align:center">
         <i class="bi bi-hourglass-split" style="font-size:2rem;color:var(--orange)"></i>
@@ -710,7 +713,51 @@ async function authSubmit(){
   btn.disabled=false;
 }
 async function authLogout(){ try{ await _sb.auth.signOut(); }catch(e){} location.reload(); }
+
+// ── Şifremi unuttum (giriş yapamadan sıfırlama maili) ──
+async function authForgot(){
+  const email=(document.getElementById('authEmail').value||'').trim().toLowerCase();
+  if(!email){ _authMsg('Önce e-posta adresinizi yazıp tekrar deneyin.',true); return; }
+  try{
+    const {error}=await _sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+    if(error) throw error;
+    _authMsg('Şifre sıfırlama bağlantısı '+email+' adresine gönderildi. Mailinizi (spam dahil) açıp bağlantıya tıklayın.',false);
+  }catch(e){ _authMsg(_trErr(e.message||e),true); }
+}
+// ── Sıfırlama bağlantısından gelince: yeni şifre formu (onay GEREKMEZ — mevcut kullanıcı) ──
+function _showNewPasswordForm(){
+  const g=document.getElementById('authGate'); if(g){ g.style.display='flex'; g.remove?null:null; }
+  if(!document.getElementById('authGate')){ document.body.insertAdjacentHTML('beforeend', _gateHtml()); }
+  const sub=document.getElementById('authSub'); if(sub) sub.textContent='Yeni şifre belirleyin';
+  const form=document.getElementById('authForm');
+  const pend=document.getElementById('authPending'); if(pend) pend.style.display='none';
+  if(form){
+    form.style.display='';
+    form.innerHTML = '<input id="npPass" type="password" class="form-control mb-2" placeholder="Yeni şifre (en az 6 karakter)" onkeydown="if(event.key===\'Enter\')authSetNewPassword()">'+
+      '<div id="authMsg" style="font-size:.8rem;min-height:1.1rem;margin-bottom:.4rem"></div>'+
+      '<button class="btn btn-primary w-100" onclick="authSetNewPassword()">Şifreyi Güncelle</button>';
+  }
+}
+async function authSetNewPassword(){
+  const np=(document.getElementById('npPass').value||'');
+  if(np.length<6){ _authMsg('Şifre en az 6 karakter olmalı.',true); return; }
+  try{
+    const {error}=await _sb.auth.updateUser({password:np}); if(error) throw error;
+    _authMsg('✅ Şifre güncellendi, giriş yapılıyor…',false);
+    try{ history.replaceState(null,'',location.origin+location.pathname); }catch(e){}
+    setTimeout(afterAuth, 900);
+  }catch(e){ _authMsg(_trErr(e.message||e),true); }
+}
+// ── Girişliyken şifre değiştir ──
+async function changePassword(){
+  const np=prompt('Yeni şifreniz (en az 6 karakter):');
+  if(np===null) return;
+  if(!np || np.length<6){ alert('Şifre en az 6 karakter olmalı.'); return; }
+  try{ const {error}=await _sb.auth.updateUser({password:np}); if(error) throw error; alert('✅ Şifreniz değiştirildi.'); }
+  catch(e){ alert('Hata: '+_trErr(e.message||e)); }
+}
 window.authToggle=authToggle; window.authSubmit=authSubmit; window.authLogout=authLogout;
+window.authForgot=authForgot; window.authSetNewPassword=authSetNewPassword; window.changePassword=changePassword;
 
 async function afterAuth(){
   const {data:{user}}=await _sb.auth.getUser();
@@ -735,6 +782,10 @@ function injectAuthUI(){
   if(foot && !document.getElementById('logoutBtn')){
     const b=document.createElement('button'); b.id='logoutBtn'; b.title='Çıkış ('+(_me.email||'')+')';
     b.innerHTML='<i class="bi bi-box-arrow-right"></i>'; b.onclick=authLogout; foot.appendChild(b);
+  }
+  if(foot && !document.getElementById('chgPassBtn')){
+    const b=document.createElement('button'); b.id='chgPassBtn'; b.title='Şifre Değiştir';
+    b.innerHTML='<i class="bi bi-key-fill"></i>'; b.onclick=changePassword; foot.appendChild(b);
   }
   if(_me.is_admin && foot && !document.getElementById('approveBtn')){
     const b=document.createElement('button'); b.id='approveBtn'; b.title='Kullanıcı Onayları';
@@ -784,9 +835,13 @@ window.openApprovals=openApprovals; window.setApprove=setApprove;
   document.body.insertAdjacentHTML('beforeend', _gateHtml());
   if(!(window.supabase && window.supabase.createClient)){ _authMsg('Supabase yüklenemedi (internet?).',true); return; }
   _sb = window.supabase.createClient(ERP_SB_URL, ERP_SB_KEY, {auth:{persistSession:true, autoRefreshToken:true}});
+  _sb.auth.onAuthStateChange(function(ev){ if(ev==='PASSWORD_RECOVERY'){ _showNewPasswordForm(); } });
   try{
+    const isRecovery = /type=recovery/i.test(location.hash||'') || /type=recovery/i.test(location.search||'');
     const {data:{session}}=await _sb.auth.getSession();
-    if(session) await afterAuth(); else _showLogin();
+    if(isRecovery){ _showNewPasswordForm(); }           // sıfırlama bağlantısından geldi → yeni şifre formu
+    else if(session) await afterAuth();
+    else _showLogin();
   }catch(e){ _showLogin(); }
 })();
 </script>
