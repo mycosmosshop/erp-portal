@@ -416,11 +416,13 @@ function renderHome(){
     cats[c].forEach(m=>{
       const disabled=!m.aktif||!m.kaynak;
       const star=favs.includes(m.id)?'on':'';
+      const _open = disabled ? '' : `onclick="launch('${m.id}')"`;
+      const _cur = disabled ? '' : 'cursor:pointer';
       html+=`<div class="mod-card ${disabled?'disabled':''}">
-        <i class="bi bi-star-fill star ${star}" onclick="toggleFav('${m.id}')" title="Favori"></i>
-        <div class="ic" style="background:${m.renk}"><i class="bi ${m.ikon}"></i></div>
-        <h3>${m.ad}</h3>
-        <p>${m.aciklama||''}</p>
+        <i class="bi bi-star-fill star ${star}" onclick="event.stopPropagation();toggleFav('${m.id}')" title="Favori"></i>
+        <div class="ic" style="background:${m.renk};${_cur}" ${_open} title="${disabled?'':'Aç'}"><i class="bi ${m.ikon}"></i></div>
+        <h3 style="${_cur}" ${_open} title="${disabled?'':'Aç'}">${m.ad}</h3>
+        <p style="${_cur}" ${_open}>${m.aciklama||''}</p>
         <div class="acts">
           ${disabled
             ? `<span class="b" style="opacity:.6;cursor:default">${m.kaynak?'Pasif':'Adres yok'}</span>`
