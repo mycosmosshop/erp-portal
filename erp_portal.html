@@ -155,7 +155,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
   <div class="sb-nav" id="sbNav"></div>
   <div class="sb-footer">
     <button onclick="goHome()" title="Ana ekran"><i class="bi bi-grid-1x2-fill"></i></button>
-    <button onclick="cycleRole()" id="roleBtn" title="Profil / Rol"><i class="bi bi-person-circle"></i></button>
+    <button onclick="cycleRole()" id="roleBtn" title="Profil / Rol" style="display:none"><i class="bi bi-person-circle"></i></button>
     <button onclick="toggleTheme()" id="themeBtn" title="Tema"><i class="bi bi-moon-stars-fill"></i></button>
     <button onclick="openManager()" title="Modül Yönetimi"><i class="bi bi-gear-fill"></i></button>
   </div>
@@ -350,8 +350,9 @@ function markDeleted(id){
 // ── Görünürlük (rol + arama + aktif) ──
 function visibleFor(m){
   if(!m.aktif) return false;
-  if(role==='admin') return true;
-  return (m.roller||['*']).includes('*') || (m.roller||[]).includes(role);
+  if(_me && _me.is_admin) return true;                                    // yönetici tüm modülleri görür
+  var allow = (_me && Array.isArray(_me.allowed_modules)) ? _me.allowed_modules : [];
+  return allow.indexOf(m.id) >= 0;                                        // kullanıcı: yalnız kendisine atanan modüller
 }
 function matchSearch(m){
   const q=(document.getElementById('searchBox').value||'').toLowerCase().trim();
@@ -391,13 +392,13 @@ function linkHtml(m){
 // ── Home ──
 function renderHome(){
   const home=document.getElementById('home');
-  const list=modules.filter(m=>matchSearch(m)).filter(m=>role==='admin'||visibleFor(m)||!m.aktif?true:true);
-  const visList=modules.filter(m=> (role==='admin'? true : visibleFor(m)||!m.aktif) && matchSearch(m));
+  const visList=modules.filter(m=> visibleFor(m) && matchSearch(m));
   const cats={};
   visList.forEach(m=>{ const c=m.kategori||'Diğer'; (cats[c]=cats[c]||[]).push(m); });
   const view=localStorage.getItem('erp_portal_view')||'grid';
+  const _who = (_me && _me.is_admin) ? 'Yönetici' : ((_me && _me.email) ? _me.email : 'Kullanıcı');
   let html=`<div class="home-hd" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem">
-    <div><h1>Uygulamalar</h1><p>${visList.filter(m=>m.aktif).length} aktif modül · profil: <b>${role}</b></p></div>
+    <div><h1>Uygulamalar</h1><p>${visList.length} modül · <b>${_who}</b></p></div>
     <div class="view-toggle">
       <button onclick="setHomeView('grid')" class="${view==='grid'?'active':''}" title="Kart görünümü"><i class="bi bi-grid-3x3-gap-fill"></i></button>
       <button onclick="setHomeView('list')" class="${view==='list'?'active':''}" title="Liste görünümü"><i class="bi bi-list-ul"></i></button>
@@ -430,6 +431,7 @@ function setHomeView(v){ try{ localStorage.setItem('erp_portal_view', v); }catch
 // ── Modül açma (iframe keep-alive) ──
 function launch(id){
   const m=modules.find(x=>x.id===id); if(!m||!m.kaynak) return;
+  if(!visibleFor(m)){ alert('Bu modüle yetkiniz yok.'); return; }   // kullanıcı-bazlı yetki
   closeMobile();
   if(m.yeniSekme){ window.open(m.kaynak,'_blank','noopener'); return; }
   currentId=id;
@@ -811,11 +813,14 @@ async function renderApprovals(){
   const {data:rows,error}=await _sb.from('erp_users').select('*').order('created_at',{ascending:false});
   if(error){ body.innerHTML='<div style="color:var(--red)">Liste alınamadı: '+error.message+'</div>'; return; }
   const pend=rows.filter(r=>!r.approved), appr=rows.filter(r=>r.approved);
+  window._usersById={}; rows.forEach(r=>{ window._usersById[r.id]=r; });
+  const totalMods=modules.length;
   const rowHtml=(r,isAppr)=>`<div class="mgr-row" style="grid-template-columns:1fr auto">
     <div style="min-width:0"><div class="nm">${r.email||r.id} ${r.is_admin?'<span style="color:var(--blue)">(admin)</span>':''}</div>
-    <div class="sub">${r.created_at?new Date(r.created_at).toLocaleString('tr-TR'):''}</div></div>
-    <div class="mgr-act">${isAppr
-      ? (r.id===_me.id?'<span style="color:var(--muted);font-size:.78rem">sen</span>':`<button onclick="setApprove('${r.id}',false)">Kaldır</button>`)
+    <div class="sub">${r.created_at?new Date(r.created_at).toLocaleString('tr-TR'):''}${(isAppr&&!r.is_admin)?(' · <b>'+((r.allowed_modules||[]).length)+'/'+totalMods+'</b> modül yetkisi'):''}</div></div>
+    <div class="mgr-act" style="display:flex;gap:.3rem">${isAppr
+      ? (r.id===_me.id?'<span style="color:var(--muted);font-size:.78rem">sen</span>'
+        : `${r.is_admin?'':`<button onclick="openUserModules('${r.id}')" title="Modül yetkileri"><i class="bi bi-grid-1x2"></i> Modüller</button>`}<button onclick="setApprove('${r.id}',false)">Kaldır</button>`)
       : `<button onclick="setApprove('${r.id}',true)" style="border-color:var(--green);color:var(--green)"><i class="bi bi-check-lg"></i> Onayla</button>`}</div></div>`;
   body.innerHTML =
     `<div class="sb-cat" style="padding-left:0">⏳ Bekleyenler (${pend.length})</div>`+
@@ -828,7 +833,38 @@ async function setApprove(id,val){
   if(error){ alert('Hata: '+error.message); return; }
   renderApprovals();
 }
+// ── Kullanıcı-bazlı modül yetkisi ata ──
+function openUserModules(uid){
+  const u=(window._usersById||{})[uid]; if(!u) return;
+  const allow=Array.isArray(u.allowed_modules)?u.allowed_modules:[];
+  let host=document.getElementById('userModModal'); if(host) host.remove();
+  host=document.createElement('div'); host.className='modal fade'; host.id='userModModal'; host.tabIndex=-1;
+  const checks=modules.slice().sort((a,b)=>((a.kategori||'').localeCompare(b.kategori||''))||a.ad.localeCompare(b.ad)).map(m=>
+    `<label style="display:flex;align-items:center;gap:.5rem;padding:.4rem .2rem;border-bottom:1px solid var(--border);cursor:pointer">
+       <input type="checkbox" class="umChk" value="${m.id}" ${allow.indexOf(m.id)>=0?'checked':''}>
+       <i class="bi ${m.ikon}" style="color:${m.renk}"></i> <span>${m.ad}</span>
+       <span style="color:var(--muted);font-size:.75rem;margin-left:auto">${m.kategori||''}</span></label>`).join('');
+  host.innerHTML=`<div class="modal-dialog modal-dialog-scrollable"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title"><i class="bi bi-grid-1x2 me-2"></i>${u.email||uid} — Modül Yetkileri</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:.6rem;display:flex;gap:.4rem">
+        <button class="btn btn-sm btn-outline-secondary" onclick="document.querySelectorAll('#userModModal .umChk').forEach(c=>c.checked=true)">Tümünü seç</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="document.querySelectorAll('#userModModal .umChk').forEach(c=>c.checked=false)">Temizle</button></div>
+      ${checks}</div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="saveUserModules('${uid}')"><i class="bi bi-check-lg"></i> Kaydet</button></div></div></div>`;
+  document.body.appendChild(host);
+  new bootstrap.Modal(host).show();
+}
+async function saveUserModules(uid){
+  const ids=[...document.querySelectorAll('#userModModal .umChk')].filter(c=>c.checked).map(c=>c.value);
+  const {error}=await _sb.from('erp_users').update({allowed_modules:ids}).eq('id',uid);
+  if(error){ alert('Hata: '+error.message); return; }
+  const md=bootstrap.Modal.getInstance(document.getElementById('userModModal')); if(md) md.hide();
+  renderApprovals();
+}
 window.openApprovals=openApprovals; window.setApprove=setApprove;
+window.openUserModules=openUserModules; window.saveUserModules=saveUserModules;
 
 // ── Açılış: önce giriş kapısı ──
 (async function(){
