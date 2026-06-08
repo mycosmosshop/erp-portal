@@ -438,6 +438,7 @@ function renderHome(){
 function setHomeView(v){ try{ localStorage.setItem('erp_portal_view', v); }catch(e){} renderHome(); }
 
 // ── Modül açma (iframe keep-alive) ──
+const _PORTAL_VER = Date.now();   // oturum başına sürüm damgası → modüller her oturumda güncel yüklenir (cache-bust)
 function launch(id){
   const m=modules.find(x=>x.id===id); if(!m||!m.kaynak) return;
   if(!visibleFor(m)){ alert('Bu modüle yetkiniz yok.'); return; }   // kullanıcı-bazlı yetki
@@ -455,7 +456,7 @@ function launch(id){
     wrap.dataset.mid=id;
     wrap.innerHTML=`<div class="frame-loading"><div class="spinner"></div><div>${m.ad} yükleniyor…</div></div>`;
     const ifr=document.createElement('iframe');
-    ifr.src=m.kaynak;
+    ifr.src=m.kaynak + (m.kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER;   // cache-bust: her oturumda guncel surum
     ifr.addEventListener('load',()=>{ const l=wrap.querySelector('.frame-loading'); if(l) l.remove(); });
     wrap.appendChild(ifr);
     document.getElementById('frameHost').appendChild(wrap);
