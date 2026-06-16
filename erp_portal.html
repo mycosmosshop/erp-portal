@@ -332,6 +332,10 @@ function loadModules(){
   let saved=null, del=[];
   try{ saved=JSON.parse(localStorage.getItem(LS_MODS)||'null'); }catch(e){}
   try{ del=JSON.parse(localStorage.getItem(LS_DEL)||'[]'); }catch(e){}
+  // Herkese zorunlu gösterilecek modüller: silinmiş olsalar bile geri getir
+  const FORCE=['egitimpolivalans'];
+  if(del.some(x=>FORCE.includes(x))){ del=del.filter(x=>!FORCE.includes(x)); localStorage.setItem(LS_DEL,JSON.stringify(del)); }
+  if(Array.isArray(saved)) saved=saved.filter(m=>!(FORCE.includes(m.id)&&m.aktif===false));
   if(!Array.isArray(saved)){
     modules=DEFAULT_MODULES.map(m=>({...m}));
   }else{
