@@ -332,8 +332,18 @@ function loadModules(){
   let saved=null, del=[];
   try{ saved=JSON.parse(localStorage.getItem(LS_MODS)||'null'); }catch(e){}
   try{ del=JSON.parse(localStorage.getItem(LS_DEL)||'[]'); }catch(e){}
-  // Herkese zorunlu gösterilecek modüller: silinmiş olsalar bile geri getir
+  // Herkese zorunlu gösterilecek modüller: silinmiş/pasif olsalar bile geri getir
+  // portal_force_v3: tek seferlik - del ve saved'den tamamen silerek DEFAULT'dan yeniden ekletir
   const FORCE=['egitimpolivalans'];
+  if(!localStorage.getItem('portal_force_v3')){
+    FORCE.forEach(id=>{
+      del=del.filter(x=>x!==id);
+      if(Array.isArray(saved)) saved=saved.filter(m=>m.id!==id);
+    });
+    localStorage.setItem(LS_DEL,JSON.stringify(del));
+    if(Array.isArray(saved)) localStorage.setItem(LS_MODS,JSON.stringify(saved));
+    localStorage.setItem('portal_force_v3','1');
+  }
   if(del.some(x=>FORCE.includes(x))){ del=del.filter(x=>!FORCE.includes(x)); localStorage.setItem(LS_DEL,JSON.stringify(del)); }
   if(Array.isArray(saved)) saved=saved.filter(m=>!(FORCE.includes(m.id)&&m.aktif===false));
   if(!Array.isArray(saved)){
