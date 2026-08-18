@@ -20,7 +20,9 @@
       var kok = document.documentElement;
       kok.setAttribute('data-erp-mod', yol);                 // modüle özgü kurallar için
       var l = document.createElement('link');
-      l.rel = 'stylesheet'; l.href = CSS_URL;
+      // Saatlik surum damgasi: tema guncellenince tarayicinin eski dosyayi
+      // onbellekten okuyup 'duzelmedi' gostermesini onler.
+      l.rel = 'stylesheet'; l.href = CSS_URL + '?v=' + Math.floor(Date.now() / 3600000);
       (document.head || kok).appendChild(l);
 
       var uygula = function(t){

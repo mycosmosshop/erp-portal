@@ -8,6 +8,14 @@ const fs = require('fs'), assert = require('assert'), https = require('https');
 const guard = fs.readFileSync(__dirname + '/erp-guard.js', 'utf8');
 const css = fs.readFileSync(__dirname + '/erp-dark.css', 'utf8').toLowerCase();
 // Ortak temadaki secicilerin TAM listesi (:root[...] on ekleri soyulur).
+// Ortak temada TANIMLI Tailwind zemin siniflarinin tam kumesi (alt dize
+// eslesmesi '.bg-white' ile '.bg-white\/80'u karistiriyordu).
+const temaTwSiniflari = new Set(
+  css.replace(/\{[^{}]*\}/g, ' ')            // govdeleri at, yalniz seciciler kalsin
+     .split(/[\s,]+/)
+     .filter(x => x.startsWith('.bg-'))
+     .map(x => x.replace(/[{].*$/, '').slice(1))   // bastaki nokta ve artik '{' temizlenir
+);
 const temaSeciciler = new Set(
   css.replace(/\/\*[\s\S]*?\*\//g, '')
      .replace(/\{[^{}]*\}/g, '\n')
@@ -107,6 +115,27 @@ function parlaklik(c) {
     }
     assert.strictEqual(eksikSecici.length, 0,
       mod + ' modulunde ' + [...new Set(eksikSecici)].length + ' acik yuzey secicisi ortak temada ezilmiyor');
+
+    // SPA modullerinde govde JS paketiyle uretilir; Tailwind zemin siniflari
+    // yalniz orada gecer. HTML/CSS taramasi bunlari gormez.
+    const twEksik = new Set();
+    for (const sc of s.matchAll(/<script[^>]*src=["']([^"']+)["']/g)) {
+      const h = sc[1];
+      if (/^https?:\/\//i.test(h) && !h.includes('mycosmosshop.github.io')) continue;   // dis CDN atlanir
+      if (h.includes('erp-guard')) continue;
+      const tam = /^https?:\/\//i.test(h) ? h : (url + h.replace(/^\.?\//, ''));
+      let js = '';
+      try { js = await indir(tam); } catch (e) { continue; }
+      for (const t of js.matchAll(/\b(bg-(?:white|gray-\d{2,3}|slate-\d{2,3}|neutral-\d{2,3}|zinc-\d{2,3}))\b/g)) {
+        const sinif = t[1];
+        const koyuMu = /-(?:[6-9]\d{2})$/.test(sinif);          // 600+ tonlar zaten koyu
+        if (koyuMu) continue;
+        if (!temaTwSiniflari.has(sinif)) twEksik.add(sinif);
+      }
+    }
+    if (twEksik.size) console.log('    JS paketindeki eslenmemis Tailwind zemini: ' + [...twEksik].join(', '));
+    assert.strictEqual(twEksik.size, 0,
+      mod + ' modulunun JS paketinde ' + twEksik.size + ' Tailwind zemin sinifi ortak temada ezilmiyor');
 
     toplamKontrol += kontrol;
     console.log('  ' + mod.padEnd(16) + ' acik zemin: ' + String(kontrol).padStart(2) +
