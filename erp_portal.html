@@ -72,6 +72,11 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .tab .x{border:0;background:transparent;color:inherit;opacity:.5;line-height:1;padding:0 .15rem;
         border-radius:4px;cursor:pointer;font-size:1rem}
 .tab .x:hover{opacity:1;background:#e5393533;color:#e53935}
+.tab .po{border:0;background:transparent;color:inherit;opacity:.45;line-height:1;padding:0 .15rem;
+         border-radius:4px;cursor:pointer;font-size:.82rem}
+.tab .po:hover{opacity:1;background:#1e88e533;color:#1e88e5}
+.tab.win{opacity:.72;border-style:dashed;border-color:var(--border)}
+.tab .kop{font-size:.7rem;font-weight:700;opacity:.65}
 .tb-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.38rem .7rem;font-size:.8rem;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem;transition:.12s;white-space:nowrap}
 .tb-btn:hover{color:var(--text);border-color:var(--blue)}
 #mobileMenuBtn{display:inline-flex}
@@ -448,7 +453,7 @@ function renderSidebar(){
 }
 function linkHtml(m){
   const on=favs.includes(m.id)?'on':'';
-  return `<a class="sb-link ${currentId===m.id?'active':''}" onclick="launch('${m.id}')">
+  return `<a class="sb-link ${_base(currentId)===m.id?'active':''}" onclick="launch('${m.id}')" oncontextmenu="yeniKopya('${m.id}');return false;" title="Sağ tık: ikinci kopya aç">
     <i class="bi ${m.ikon} ico" style="color:${m.renk}"></i>
     <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.ad}</span>
     <i class="bi bi-star-fill fav ${on}" onclick="event.stopPropagation();toggleFav('${m.id}')"></i>
@@ -496,10 +501,29 @@ function renderHome(){
 }
 function setHomeView(v){ try{ localStorage.setItem('erp_portal_view', v); }catch(e){} renderHome(); }
 
+// ── Sekme kimligi: "tedarikci" temel, "tedarikci#2" ikinci kopya ──
+function _base(mid){ return String(mid || '').split('#')[0]; }
+function _kopyaNo(mid){ const p = String(mid || '').split('#'); return p.length > 1 ? (+p[1] || 1) : 1; }
+const _popup = {};          // mid -> ayrı pencere referansı
+let _popTimer = null;
+function _popIzle(){
+  if (_popTimer) return;
+  _popTimer = setInterval(function(){
+    let kaldi = 0;
+    Object.keys(_popup).forEach(function(mid){
+      const w = _popup[mid];
+      if (!w || w.closed) { delete _popup[mid]; renderTabs(); }   // pencere kapandı → sekme listesinden düşsün
+      else kaldi++;
+    });
+    if (!kaldi) { clearInterval(_popTimer); _popTimer = null; }
+  }, 1000);
+}
+
 // ── Modül açma (iframe keep-alive) ──
 const _PORTAL_VER = Date.now();   // oturum başına sürüm damgası → modüller her oturumda güncel yüklenir (cache-bust)
 function launch(id){
-  const m=modules.find(x=>x.id===id); if(!m||!m.kaynak) return;
+  const m=modules.find(x=>x.id===_base(id)); if(!m||!m.kaynak) return;
+  if(_popup[id] && !_popup[id].closed){ try{ _popup[id].focus(); }catch(e){} return; }   // ayrı pencerede açık
   if(!visibleFor(m)){ alert('Bu modüle yetkiniz yok.'); return; }   // kullanıcı-bazlı yetki
   closeMobile();
   if(window.innerWidth>860 && document.body.classList.contains('sb-unpinned')) document.body.classList.add('sb-collapsed');  // pin kapalıysa modül açınca menüyü gizle
@@ -534,11 +558,22 @@ function launch(id){
 function renderTabs(){
   const host=document.getElementById('tbTabs'); if(!host) return;
   const acik=[...document.querySelectorAll('.frame-wrap')].map(w=>w.dataset.mid);
+  Object.keys(_popup).forEach(mid=>{ if(acik.indexOf(mid)<0) acik.push(mid); });   // ayrı penceredekiler de listede
   host.innerHTML = acik.map(id=>{
-    const m=modules.find(x=>x.id===id); if(!m) return '';
-    const act = (id===currentId) ? ' act' : '';
-    return `<div class="tab${act}" data-mid="${id}" onclick="launch('${id}')" title="${(m.ad||'').replace(/"/g,'&quot;')}">`
-         + `<i class="bi ${m.ikon}" style="color:${m.renk}"></i><span class="nm">${m.ad}</span>`
+    const m=modules.find(x=>x.id===_base(id)); if(!m) return '';
+    const pencerede = !!(_popup[id] && !_popup[id].closed);
+    const act = (!pencerede && id===currentId) ? ' act' : '';
+    const kop = _kopyaNo(id) > 1 ? `<span class="kop">#${_kopyaNo(id)}</span>` : '';
+    const ad = (m.ad||'').replace(/"/g,'&quot;');
+    if(pencerede){
+      return `<div class="tab win" data-mid="${id}" onclick="dockBack('${id}')" title="${ad} — ayrı pencerede. Tıkla: sekmeye geri getir">`
+           + `<i class="bi ${m.ikon}" style="color:${m.renk}"></i><span class="nm">${m.ad}</span>${kop}`
+           + `<span class="po" title="Ayrı pencerede">⧉</span>`
+           + `<button class="x" onclick="closeTab('${id}',event)" title="Pencereyi kapat">&times;</button></div>`;
+    }
+    return `<div class="tab${act}" data-mid="${id}" onclick="launch('${id}')" title="${ad}">`
+         + `<i class="bi ${m.ikon}" style="color:${m.renk}"></i><span class="nm">${m.ad}</span>${kop}`
+         + `<button class="po" onclick="popOut('${id}',event)" title="Ayrı pencereye taşı (yan yana çalışmak için)">⧉</button>`
          + `<button class="x" onclick="closeTab('${id}',event)" title="Sekmeyi kapat">&times;</button></div>`;
   }).join('');
   const t=document.getElementById('tbTitle');
@@ -548,6 +583,7 @@ function renderTabs(){
 }
 function closeTab(id, ev){
   if(ev){ ev.stopPropagation(); ev.preventDefault(); }
+  if(_popup[id]){ try{ _popup[id].close(); }catch(e){} delete _popup[id]; }
   const wrap=document.querySelector(`.frame-wrap[data-mid="${id}"]`);
   if(wrap) wrap.remove();                       // iframe yok edilir → bellek geri alınır
   if(currentId===id){
@@ -556,6 +592,42 @@ function closeTab(id, ev){
   } else {
     renderTabs();
   }
+}
+// Sekmeyi AYRI PENCEREYE TAŞI: iframe kapatılır, aynı modül aynı anda iki yerde
+// çalışmaz → veri çakışması olmaz. Yan yana çalışmak için tasarlandı.
+function popOut(mid, ev){
+  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
+  const m=modules.find(x=>x.id===_base(mid)); if(!m||!m.kaynak) return;
+  const w=window.open(m.kaynak + (m.kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER,
+                      'erp_' + mid.replace(/[^a-zA-Z0-9]/g,'_'),
+                      'width=1400,height=900,menubar=no,toolbar=no');
+  if(!w){ alert('Tarayıcı açılır pencereyi engelledi.\nAdres çubuğundaki engelleme simgesinden bu siteye izin verin.'); return; }
+  _popup[mid]=w; _popIzle();
+  const wrap=document.querySelector(`.frame-wrap[data-mid="${mid}"]`);
+  if(wrap) wrap.remove();                       // aynı anda iki kopya OLMAZ (taşıma, kopyalama değil)
+  if(currentId===mid){
+    const kalan=[...document.querySelectorAll('.frame-wrap')].map(w2=>w2.dataset.mid);
+    if(kalan.length) launch(kalan[kalan.length-1]); else goHome();
+  } else renderTabs();
+}
+// Ayrı pencereyi kapatıp sekmeye geri al
+function dockBack(mid){
+  const w=_popup[mid];
+  if(w && !w.closed){ try{ w.close(); }catch(e){} }
+  delete _popup[mid];
+  launch(mid);
+}
+// Aynı modülden ikinci kopya. UYARI: modüller veriyi tarayıcıda ORTAK saklar
+// (localStorage/IndexedDB); iki kopyada da düzenleme yapılırsa son kaydeden kazanır.
+function yeniKopya(mid){
+  const base=_base(mid);
+  const m=modules.find(x=>x.id===base); if(!m) return;
+  if(!confirm('"' + m.ad + '" modülünün ikinci bir kopyası açılacak.\n\n'
+    + 'DİKKAT: Modüller veriyi tarayıcıda ortak saklar. İki kopyada da DÜZENLEME yaparsanız '
+    + 'son kaydeden diğerini ezer. Yalnızca birinde düzenleyin, diğerini görüntüleme için kullanın.\n\n'
+    + 'Yan yana çalışmak için daha güvenli yol: sekmedeki ⧉ ile ayrı pencereye TAŞIMAK.\n\nDevam edilsin mi?')) return;
+  let n=2; while(document.querySelector(`.frame-wrap[data-mid="${base}#${n}"]`) || _popup[base+'#'+n]) n++;
+  launch(base + '#' + n);
 }
 function goHome(){
   currentId=null;
@@ -569,7 +641,7 @@ function goHome(){
 function reloadCurrent(){
   const wrap=document.querySelector(`.frame-wrap[data-mid="${currentId}"]`);
   if(wrap){ const ifr=wrap.querySelector('iframe'); const src=ifr.src;
-    if(!wrap.querySelector('.frame-loading')){ const m=modules.find(x=>x.id===currentId);
+    if(!wrap.querySelector('.frame-loading')){ const m=modules.find(x=>x.id===_base(currentId));
       const l=document.createElement('div'); l.className='frame-loading';
       l.innerHTML=`<div class="spinner"></div><div>${m.ad} yenileniyor…</div>`; wrap.appendChild(l);
       ifr.addEventListener('load',()=>l.remove(),{once:true}); }
@@ -681,7 +753,7 @@ function deleteModule(id){
   if(!confirm(`"${m.ad}" modülü kaldırılsın mı?`)) return;
   modules=modules.filter(x=>x.id!==id);
   markDeleted(id); saveModules(); renderManager(); renderSidebar(); renderHome();
-  if(currentId===id) goHome();
+  if(_base(currentId)===id) goHome();
 }
 function editModule(id){
   const m=id?modules.find(x=>x.id===id):null;
