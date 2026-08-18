@@ -456,7 +456,7 @@ function renderSidebar(){
 }
 function linkHtml(m){
   const on=favs.includes(m.id)?'on':'';
-  return `<a class="sb-link ${_base(currentId)===m.id?'active':''}" onclick="launch('${m.id}')" oncontextmenu="yeniKopya('${m.id}');return false;" title="Sağ tık: ikinci kopya aç">
+  return `<a class="sb-link ${_base(currentId)===m.id?'active':''}" onclick="launch('${m.id}')">
     <i class="bi ${m.ikon} ico" style="color:${m.renk}"></i>
     <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.ad}</span>
     <i class="bi bi-star-fill fav ${on}" onclick="event.stopPropagation();toggleFav('${m.id}')"></i>
