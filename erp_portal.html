@@ -699,11 +699,8 @@ function _temaGecisKilit(){
     document.head.appendChild(st);
   }
   k.classList.add('tema-gecis');
-  k.style.visibility='hidden';                       // atomik gecis (parca parca boyama gorunmesin)
   clearTimeout(window.__temaGecisZ);
-  const ac=()=>{ k.style.visibility=''; k.classList.remove('tema-gecis'); };
-  window.__temaGecisZ=setTimeout(ac,400);            // GUVENLIK: her kosulda geri ac
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{ clearTimeout(window.__temaGecisZ); ac(); }));
+  window.__temaGecisZ=setTimeout(()=>k.classList.remove('tema-gecis'),140);
 }
 function toggleTheme(){
   _temaGecisKilit();                       // yanip sonmeyi onle

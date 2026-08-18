@@ -12,18 +12,12 @@
 (function(){
   // Tema degisirken gecis animasyonlarini kisa sureligine kapat (yanip sonme onlenir).
   // Kural ortak CSS'te; kendi temasi olan modullerde de calissin diye burada da yazilir.
-  // Gecisi MASKELE: cok buyuk sayfalarda yeniden boyama parca parca ilerliyor
-  // ve tema "bolum bolum" iniyor gibi gorunuyor. Icerik 2 kare gizlenir.
+  // Tema degisirken gecis/animasyonlari kisa sureligine kapat.
+  // NOT: Icerigi gizleyerek "atomik gecis" denendi ve GERI ALINDI — tum ekran
+  // sonup yaniyordu, kademeli gecisten daha rahatsiz ediciydi.
   function gecisiKilitle(){
     try{
       var k = document.documentElement;
-      k.style.visibility = 'hidden';
-      clearTimeout(window.__erpMaskeZ);
-      var ac = function(){ k.style.visibility = ''; };
-      window.__erpMaskeZ = setTimeout(ac, 400);            // GUVENLIK: her kosulda geri ac
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){
-        clearTimeout(window.__erpMaskeZ); ac();
-      }); });
       if(!document.getElementById('erpTemaGecisStil')){
         var st = document.createElement('style'); st.id = 'erpTemaGecisStil';
         st.textContent = ':root.tema-gecis,:root.tema-gecis *,:root.tema-gecis *::before,:root.tema-gecis *::after{'
@@ -67,8 +61,11 @@
     var yol = (dosya && dosya !== klasor) ? (klasor + '/' + dosya) : klasor;
 
     // ── Kendi temasi olan modul: yalnizca anahtarini sur ──
-    if(KENDI_TEMASI[yol]){
-      var kanca = KENDI_TEMASI[yol];
+    // Kimlik "klasor/dosya" olabilir (kalite-kontrol/kalite_kontrol); kayitlar
+    // klasor adiyla tutuldugu icin ikisi de denenir.
+    var ktAnahtar = KENDI_TEMASI[yol] ? yol : (KENDI_TEMASI[klasor] ? klasor : null);
+    if(ktAnahtar){
+      var kanca = KENDI_TEMASI[ktAnahtar];
       var surulen = null;
       var sur = function(th){
         if(!th) return;
@@ -91,9 +88,12 @@
       return;                                        // ortak CSS BASILMAZ
     }
 
-    if(KOYU_MODULLER.indexOf(yol) >= 0){
+    // Ortak CSS listesinde tam kimlik ya da klasor adi bulunabilir
+    var csKimlik = (KOYU_MODULLER.indexOf(yol) >= 0) ? yol
+                 : ((KOYU_MODULLER.indexOf(klasor) >= 0) ? klasor : null);
+    if(csKimlik){
       var kok = document.documentElement;
-      kok.setAttribute('data-erp-mod', yol);                 // modüle özgü kurallar için
+      kok.setAttribute('data-erp-mod', csKimlik);            // modüle özgü kurallar için
       var l = document.createElement('link');
       // Saatlik surum damgasi: tema guncellenince tarayicinin eski dosyayi
       // onbellekten okuyup 'duzelmedi' gostermesini onler.

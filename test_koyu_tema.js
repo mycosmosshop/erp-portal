@@ -184,6 +184,28 @@ function parlaklik(c) {
     }
   }
 
+  // ── Kimlik turetimi <-> yapilandirma tutarliligi ──
+  // erp-theme.js kimligi "klasor" ya da "klasor/dosya" olarak turetir; listelerdeki
+  // anahtarlar bunlardan biriyle ESLESMELI. (Kimlik bicimi degistiginde kanca
+  // sessizce devre disi kalmisti — tema hic uygulanmiyordu.)
+  function kimlikTuret(pathname){
+    const p = pathname.split('/').filter(Boolean);
+    const klasor = (p[0] || '').toLowerCase();
+    const dosya = (p[p.length - 1] || '').toLowerCase().replace(/\.html?$/, '').replace(/^index$/, '');
+    return { klasor, tam: (dosya && dosya !== klasor) ? (klasor + '/' + dosya) : klasor };
+  }
+  const tumAnahtarlar = new Set(moduller);
+  if (kt) [...kt[1].matchAll(/'([^']+)'\s*:/g)].forEach(x => tumAnahtarlar.add(x[1]));
+  for (const anahtar of tumAnahtarlar) {
+    // Modulun GERCEK adresinden kimlik turet ve eslesip eslesmedigine bak
+    let yolAdi = anahtar.includes('/') ? ('/' + anahtar + '.html') : ('/' + anahtar + '/');
+    if (anahtar === 'kalite-kontrol') yolAdi = '/kalite-kontrol/kalite_kontrol.html';   // JS yonlendirmesi sonrasi
+    const k = kimlikTuret(yolAdi);
+    assert.ok(tumAnahtarlar.has(k.tam) || tumAnahtarlar.has(k.klasor),
+      '"' + anahtar + '" icin turetilen kimlik (' + k.tam + ' / ' + k.klasor + ') hicbir listeyle eslesmiyor');
+  }
+  console.log('kimlik turetimi: ' + tumAnahtarlar.size + ' anahtarin tamami esleniyor  ✔');
+
   // Temel yuzey kurallari ve tema kaynaklari yerinde mi
   ['body', 'tbody tr', 'input', 'select', '.modal-dialog'].forEach(sec =>
     assert.ok(css.includes(sec), 'ortak temada "' + sec + '" kurali yok'));
