@@ -75,6 +75,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .tab .po{border:0;background:transparent;color:inherit;opacity:.45;line-height:1;padding:0 .15rem;
          border-radius:4px;cursor:pointer;font-size:.82rem}
 .tab .po:hover{opacity:1;background:#1e88e533;color:#1e88e5}
+.tab .kp{border:0;background:transparent;color:inherit;opacity:.45;line-height:1;padding:0 .2rem;
+         border-radius:4px;cursor:pointer;font-size:.95rem;font-weight:700}
+.tab .kp:hover{opacity:1;background:#43a04733;color:#2e7d32}
 .tab.win{opacity:.72;border-style:dashed;border-color:var(--border)}
 .tab .kop{font-size:.7rem;font-weight:700;opacity:.65}
 .tb-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.38rem .7rem;font-size:.8rem;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem;transition:.12s;white-space:nowrap}
@@ -573,6 +576,7 @@ function renderTabs(){
     }
     return `<div class="tab${act}" data-mid="${id}" onclick="launch('${id}')" title="${ad}">`
          + `<i class="bi ${m.ikon}" style="color:${m.renk}"></i><span class="nm">${m.ad}</span>${kop}`
+         + `<button class="kp" onclick="yeniKopya('${id}',event)" title="Bu modülden ikinci kopya aç">+</button>`
          + `<button class="po" onclick="popOut('${id}',event)" title="Ayrı pencereye taşı (yan yana çalışmak için)">⧉</button>`
          + `<button class="x" onclick="closeTab('${id}',event)" title="Sekmeyi kapat">&times;</button></div>`;
   }).join('');
@@ -619,7 +623,8 @@ function dockBack(mid){
 }
 // Aynı modülden ikinci kopya. UYARI: modüller veriyi tarayıcıda ORTAK saklar
 // (localStorage/IndexedDB); iki kopyada da düzenleme yapılırsa son kaydeden kazanır.
-function yeniKopya(mid){
+function yeniKopya(mid, ev){
+  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
   const base=_base(mid);
   const m=modules.find(x=>x.id===base); if(!m) return;
   if(!confirm('"' + m.ad + '" modülünün ikinci bir kopyası açılacak.\n\n'
