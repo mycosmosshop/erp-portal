@@ -55,8 +55,11 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .topbar .title i{font-size:1.15rem}
 .topbar .title span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar .sp{flex:1}
-/* Veri tazeligi paneli */
-.tz{border:1px solid var(--border);border-radius:12px;background:var(--bg2);padding:.85rem 1rem;margin-bottom:1.1rem}
+/* Veri tazeligi: ust cubukta rozet + acilir panel */
+#tzBtn.uyari{color:#ffa726} #tzBtn.kritik{color:#ef5350;font-weight:700} #tzBtn.iyi{opacity:.75}
+.tz-pop{position:fixed;z-index:1200;min-width:430px;max-width:94vw;border:1px solid var(--border);
+        border-radius:12px;background:var(--bg2);box-shadow:0 10px 34px rgba(0,0,0,.35);padding:.85rem 1rem}
+.tz{border:0;border-radius:0;background:transparent;padding:0;margin:0}
 .tz h3{margin:0 0 .1rem;font-size:.95rem;display:flex;align-items:center;gap:.45rem}
 .tz .alt{font-size:.78rem;opacity:.7;margin-bottom:.6rem}
 .tz table{width:100%;border-collapse:collapse;font-size:.82rem}
@@ -215,6 +218,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
     <div class="title home act" id="tbTitle" onclick="goHome()" title="Ana ekrana dön"><i class="bi bi-grid-1x2-fill"></i><span>Ana Ekran</span></div>
     <div class="tabs" id="tbTabs"></div>
     <div class="sp" style="flex:0"></div>
+    <button class="tb-btn" id="tzBtn" onclick="tzAcKapa(event)" title="Veri tazeliği — kaynaklar en son ne zaman güncellendi"><i class="bi bi-broadcast"></i><span id="tzRozet" class="lbl">…</span></button>
     <button class="tb-btn" id="tbReload" onclick="reloadCurrent()" style="display:none"><i class="bi bi-arrow-clockwise"></i><span class="lbl">Yenile</span></button>
     <a class="tb-btn" id="tbNew" href="#" target="_blank" rel="noopener" style="display:none"><i class="bi bi-box-arrow-up-right"></i><span class="lbl">Yeni Sekme</span></a>
     <button class="tb-btn" id="tbFull" onclick="fullscreenCurrent()" style="display:none"><i class="bi bi-arrows-fullscreen"></i></button>
@@ -492,9 +496,7 @@ function renderHome(){
       <button onclick="setHomeView('grid')" class="${view==='grid'?'active':''}" title="Kart görünümü"><i class="bi bi-grid-3x3-gap-fill"></i></button>
       <button onclick="setHomeView('list')" class="${view==='list'?'active':''}" title="Liste görünümü"><i class="bi bi-list-ul"></i></button>
     </div>
-  </div>
-  <div id="tazelikPanel"></div>
-  <div class="card-grid ${view==='list'?'list':''}">`;
+  </div><div class="card-grid ${view==='list'?'list':''}">`;
   Object.keys(cats).sort().forEach(c=>{
     html+=`<div class="cat-title">${c}</div>`;
     cats[c].forEach(m=>{
@@ -518,7 +520,6 @@ function renderHome(){
   });
   html+='</div>';
   home.innerHTML=html;
-  try{ tzYukle(); }catch(e){}   // veri tazeligi panelini doldur
 }
 // ── VERI TAZELIGI ────────────────────────────────────────────────────────
 // Kaynaklarin en son ne zaman guncellendigini gosterir. Zincirin bir halkasi
@@ -548,9 +549,35 @@ async function tzOku(k){
   return new Date(String(d[0][k.z]).replace(' ', 'T'));
 }
 
+function tzRozetGuncelle(satirlar){
+  const b = document.getElementById('tzBtn'), r = document.getElementById('tzRozet');
+  if(!b || !r) return;
+  const kotu = satirlar.filter(x=> x.hata || x.gun == null || x.gun > x.esik[1]).length;
+  const orta = satirlar.filter(x=> !x.hata && x.gun != null && x.gun > x.esik[0] && x.gun <= x.esik[1]).length;
+  b.classList.remove('iyi','uyari','kritik');
+  if(kotu){ b.classList.add('kritik'); r.textContent = kotu + ' kaynak geride'; b.title = kotu + ' veri kaynağı güncel değil — tıkla'; }
+  else if(orta){ b.classList.add('uyari'); r.textContent = 'veri: ' + orta + ' uyarı'; b.title = orta + ' kaynak eşik yaklaşımında — tıkla'; }
+  else { b.classList.add('iyi'); r.textContent = 'veri güncel'; b.title = 'Tüm veri kaynakları güncel — tıkla'; }
+}
+function tzAcKapa(ev){
+  if(ev) ev.stopPropagation();
+  const eski = document.getElementById('tzPop');
+  if(eski){ eski.remove(); return; }
+  const pop = document.createElement('div');
+  pop.id = 'tzPop'; pop.className = 'tz-pop';
+  pop.onclick = e => e.stopPropagation();
+  document.body.appendChild(pop);
+  const b = document.getElementById('tzBtn').getBoundingClientRect();
+  pop.style.top = (b.bottom + 6) + 'px';
+  pop.style.right = Math.max(8, window.innerWidth - b.right) + 'px';
+  document.addEventListener('click', function kapat(){ const p=document.getElementById('tzPop'); if(p) p.remove();
+    document.removeEventListener('click', kapat); });
+  tzYukle();
+}
 function tzCiz(satirlar){
-  const el = document.getElementById('tazelikPanel');
-  if(!el) return;
+  tzRozetGuncelle(satirlar);
+  const el = document.getElementById('tzPop');
+  if(!el) return;   // panel kapali: yalniz rozet guncellendi
   const govde = satirlar.map(x=>{
     if(x.hata) return `<tr class="kotu"><td class="ad"><span class="rz"></span>${x.ad}</td>
       <td colspan="2" style="opacity:.75">okunamadı — ${x.hata}</td></tr>`;
@@ -572,10 +599,9 @@ function tzCiz(satirlar){
 }
 
 async function tzYukle(zorla){
-  const el = document.getElementById('tazelikPanel');
-  if(!el) return;
   if(!zorla && _tzSonVeri && (Date.now() - _tzZaman) < 300000){ tzCiz(_tzSonVeri); return; }
-  el.innerHTML = `<div class="tz"><h3><i class="bi bi-broadcast"></i> Veri Tazeliği</h3>
+  const el = document.getElementById('tzPop');
+  if(el) el.innerHTML = `<div class="tz"><h3><i class="bi bi-broadcast"></i> Veri Tazeliği</h3>
     <div class="alt">okunuyor…</div></div>`;
   const simdi = Date.now();
   const satirlar = await Promise.all(TZ_KAYNAK.map(async k=>{
@@ -959,6 +985,7 @@ function bootPortal(){
   document.documentElement.setAttribute('data-bs-theme',th);
   document.getElementById('themeBtn').innerHTML=`<i class="bi ${th==='dark'?'bi-moon-stars-fill':'bi-sun-fill'}"></i>`;
   setTimeout(()=>temayiYay(th), 300);                        // acilista zaten yuklu moduller varsa
+  setTimeout(()=>{ try{ tzYukle(); }catch(e){} }, 1200);      // veri tazeligi rozetini doldur
   role=localStorage.getItem(LS_ROLE)||'admin';
   document.getElementById('roleBtn').title='Profil: '+role;
   try{ favs=JSON.parse(localStorage.getItem(LS_FAVS)||'[]'); }catch(e){ favs=[]; }
