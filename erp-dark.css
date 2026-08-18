@@ -769,3 +769,90 @@ baslik ve satir vurgusu acik kaliyordu). */
   background:var(--k-yuzey)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
 }
 
+/* NOT: Kalibrasyon burada YOK — modulun kendi Tailwind dark: destegi var,
+   erp-theme.js 'dark' sinifini suruyor (grafik renkleri de ona bakiyor). */
+
+/* -- dokuman-yonetimi ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .btn:hover,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .code-adet,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .code-tbl tr:hover td,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .filebox,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .menu-pop button:hover,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .rev,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .rev-add,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .rev-btn,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .rev-btn:hover,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .rev-tbl th,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .tpl-btn,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .tpl-btn:hover,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .tpl-results div:hover,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .tpl-tags code,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] code.tagchip,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] code.tagchip:hover,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] tbody tr:hover{
+  background:#16324a!important; color:#90caf9!important;
+}
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .auth-card,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .btn,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .filters,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .menu-pop,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .modal,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .tab,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .tbl-wrap,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .tpl-card{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .menu-pop button.danger:hover,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .msg.err,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .rev-btn.danger:hover,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .rev-x:hover{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] #adminBtn.on,
+:root[data-theme="dark"][data-erp-mod="dokuman-yonetimi"] .msg.ok{
+  background:#17351f!important; color:#a5d6a7!important;
+}
+/* toplam 31 secici, 4 grup */
+
+/* -- msa/capability ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="msa/capability"] .btn.primary,
+:root[data-theme="dark"][data-erp-mod="msa/capability"] .ddmenu{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}
+:root[data-theme="dark"][data-erp-mod="msa/capability"] .b-draft,
+:root[data-theme="dark"][data-erp-mod="msa/capability"] .ddmenu a:hover{
+  background:#16324a!important; color:#90caf9!important;
+}
+:root[data-theme="dark"][data-erp-mod="msa/capability"] .b-bad,
+:root[data-theme="dark"][data-erp-mod="msa/capability"] .sbtn.del{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}
+:root[data-theme="dark"][data-erp-mod="msa/capability"] .b-ok{
+  background:#17351f!important; color:#a5d6a7!important;
+}
+:root[data-theme="dark"][data-erp-mod="msa/capability"] .b-mid{
+  background:#3b3314!important; color:#ffe082!important;
+}
+/* toplam 8 secici, 5 grup */
+
+/* -- msa/control-charts ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="msa/control-charts"] .btn.primary,
+:root[data-theme="dark"][data-erp-mod="msa/control-charts"] .ddmenu{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}
+:root[data-theme="dark"][data-erp-mod="msa/control-charts"] .b-bad,
+:root[data-theme="dark"][data-erp-mod="msa/control-charts"] .sbtn.del{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}
+:root[data-theme="dark"][data-erp-mod="msa/control-charts"] .ddmenu a:hover{
+  background:#16324a!important; color:#90caf9!important;
+}
+:root[data-theme="dark"][data-erp-mod="msa/control-charts"] .b-ok{
+  background:#17351f!important; color:#a5d6a7!important;
+}
+/* toplam 6 secici, 4 grup */
+
+/* Modullerden toplanan ek satir ici zemin renkleri (tonuna gore) */
+:root[data-theme="dark"] [style*="#f2f4f8"]{
+  background:#16324a!important; color:#90caf9!important;
+}

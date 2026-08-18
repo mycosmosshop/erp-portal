@@ -6,6 +6,19 @@
 const fs = require('fs'), assert = require('assert'), https = require('https');
 
 const guard = fs.readFileSync(__dirname + '/erp-theme.js', 'utf8');   // tema mantigi buraya tasindi
+// Modul adresleri PORTALIN kendi listesinden okunur; kimlikten tahmin etmek
+// bakim_yonetim_sistemi.html gibi durumlarda 404 veriyordu.
+const portalHtml = fs.readFileSync(__dirname + '/erp_portal.html', 'utf8');
+const KAYNAK = {};
+for (const m of portalHtml.matchAll(/kaynak:'([^']+)'/g)) {
+  const yol = m[1].replace('https://mycosmosshop.github.io/', '').replace(/\/$/, '');
+  const p2 = yol.split('/').filter(Boolean);
+  const klasor = (p2[0] || '').toLowerCase();
+  const dosya = (p2[p2.length - 1] || '').toLowerCase().replace(/\.html?$/, '').replace(/^index$/, '');
+  const tam = (dosya && dosya !== klasor) ? (klasor + '/' + dosya) : klasor;
+  KAYNAK[tam] = m[1];
+  if (!KAYNAK[klasor]) KAYNAK[klasor] = m[1];
+}
 const css = fs.readFileSync(__dirname + '/erp-dark.css', 'utf8').toLowerCase();
 // Ortak temadaki secicilerin TAM listesi (:root[...] on ekleri soyulur).
 // Ortak temada TANIMLI Tailwind zemin siniflarinin tam kumesi (alt dize
@@ -59,9 +72,9 @@ function parlaklik(c) {
   let toplamKontrol = 0;
   for (const mod of moduller) {
     // Kimlik 'klasor/dosya' ise .html sayfasina, degilse klasore git
-    let url = mod.includes('/')
+    let url = KAYNAK[mod] || (mod.includes('/')
       ? 'https://mycosmosshop.github.io/' + mod + '.html'
-      : 'https://mycosmosshop.github.io/' + mod + '/';
+      : 'https://mycosmosshop.github.io/' + mod + '/');
     let s = await indir(url);
     // Bazi moduller index.html'den JS ile asil dosyaya yonlendiriyor (ornek:
     // kalite-kontrol -> kalite_kontrol.html). Izlenmezse modul "renksiz" gorunur.
@@ -164,17 +177,29 @@ function parlaklik(c) {
   // ── Kendi tema sistemi olan moduller ──
   const kt = guard.match(/KENDI_TEMASI\s*=\s*\{([\s\S]*?)\n  \};/);
   if (kt) {
-    const kendi = [...kt[1].matchAll(/'([^']+)'\s*:/g)].map(x => x[1]);
+    const kendi = [...kt[1].matchAll(/^\s*'([^']+)'\s*:/gm)].map(x => x[1]);   // yalniz satir basi anahtarlar
     console.log('\nkendi temasini kullanan modul: ' + (kendi.join(', ') || '(yok)'));
     for (const mod of kendi) {
       assert.ok(!moduller.includes(mod),
         mod + ' HEM ortak CSS listesinde HEM kendi tema listesinde — cift uygulama olur');
       // Kancanin cagirdigi fonksiyon adini cikar (ornek: window.applyTheme)
-      const govde = kt[1].slice(kt[1].indexOf("'" + mod + "'"));
+      // Kancanin YALNIZ kendi govdesi (sonraki anahtara kadar) — aksi halde
+      // sonraki kancalarin kodu bu kancaya aitmis gibi gorunuyordu.
+      const bas2 = kt[1].indexOf("'" + mod + "'");
+      const son2 = kt[1].indexOf("\n    '", bas2 + 1);
+      const govde = kt[1].slice(bas2, son2 < 0 ? undefined : son2);
       const fn = (govde.match(/window\.([A-Za-z_$][\w$]*)\s*===\s*'function'|typeof window\.([A-Za-z_$][\w$]*)/) || []);
       const ad = fn[1] || fn[2];
-      assert.ok(ad, mod + ' kancasinda cagrilan fonksiyon adi cozulemedi');
-      let url2 = 'https://mycosmosshop.github.io/' + mod + '/';
+      if (!ad) {
+        // Kanca modulun bir fonksiyonunu cagirmiyor, temayi DOGRUDAN uyguluyor
+        // (ornek: data-theme niteligini kendisi yaziyor). Fonksiyon aranmaz.
+        const yontem = /data-theme/.test(govde) ? 'data-theme niteligi'
+                     : (/classList/.test(govde) ? 'CSS sinifi' : null);
+        assert.ok(yontem, mod + ' kancasi ne fonksiyon cagiriyor ne de temayi dogrudan uyguluyor');
+        console.log('  ' + mod.padEnd(16) + ' kanca: dogrudan ' + yontem + '  ✔');
+        continue;
+      }
+      let url2 = KAYNAK[mod] || ('https://mycosmosshop.github.io/' + mod + '/');
       let sayfa = await indir(url2);
       const y2 = sayfa.match(/location\.replace\(\s*['"]([^'"]+?)['"]/);
       if (y2 && sayfa.length < 4000) sayfa = await indir(url2 + y2[1].replace(/^\.?\//, ''));
@@ -195,10 +220,12 @@ function parlaklik(c) {
     return { klasor, tam: (dosya && dosya !== klasor) ? (klasor + '/' + dosya) : klasor };
   }
   const tumAnahtarlar = new Set(moduller);
-  if (kt) [...kt[1].matchAll(/'([^']+)'\s*:/g)].forEach(x => tumAnahtarlar.add(x[1]));
+  if (kt) [...kt[1].matchAll(/^\s*'([^']+)'\s*:/gm)].forEach(x => tumAnahtarlar.add(x[1]));
   for (const anahtar of tumAnahtarlar) {
     // Modulun GERCEK adresinden kimlik turet ve eslesip eslesmedigine bak
-    let yolAdi = anahtar.includes('/') ? ('/' + anahtar + '.html') : ('/' + anahtar + '/');
+    let yolAdi = KAYNAK[anahtar]
+      ? new URL(KAYNAK[anahtar]).pathname
+      : (anahtar.includes('/') ? ('/' + anahtar + '.html') : ('/' + anahtar + '/'));
     if (anahtar === 'kalite-kontrol') yolAdi = '/kalite-kontrol/kalite_kontrol.html';   // JS yonlendirmesi sonrasi
     const k = kimlikTuret(yolAdi);
     assert.ok(tumAnahtarlar.has(k.tam) || tumAnahtarlar.has(k.klasor),

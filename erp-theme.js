@@ -42,7 +42,11 @@
     'supplier-system/dof-yonetimi',
     'egitim-polivalans',
     'pfmea',            // SPA + Tailwind: ortak Tailwind bolumu yetiyor
-    'gantt-chart'       // SPA + Tailwind
+    'gantt-chart',      // SPA + Tailwind
+    'dokuman-yonetimi',
+    'msa',
+    'msa/capability',
+    'msa/control-charts'
   ];
   // KENDI tema sistemi olan moduller: CSS basilmaz, modulun kendi anahtari surulur.
   // (Ustune yazmak iki paleti karistirir: govde koyu, baslik/hover acik kalir.)
@@ -50,6 +54,27 @@
     'kalite-kontrol': function(t){
       if (typeof window.applyTheme === 'function'){ window.applyTheme(t); return true; }
       return false;                                  // modul JS'i henuz yuklenmedi
+    },
+    // Bakim ve VDA 6.3 PORTALIN KONVANSIYONUNU kullaniyor: data-theme, koyu
+    // varsayilan, [data-theme="light"] ile acik palet. Ortak CSS basmak iki
+    // paleti catistirirdi; yalniz kendi anahtarlari surulur.
+    'bakim-yonetim-sistemi': function(t){
+      if (typeof window.applyTheme === 'function'){ window.applyTheme(t); return true; }
+      return false;                                  // applyTheme grafikleri de tazeler
+    },
+    // Kalibrasyon'da HAZIR ama baglanmamis bir koyu tema var: 280 Tailwind
+    // "dark:" varyanti ve grafik renkleri documentElement.classList('dark')
+    // okuyor; yalniz sinifi ekleyen kod yokmus. Ortak CSS basmak yerine o
+    // sinif surulur — grafikler de dogru renge gecer.
+    'kalibrasyon': function(t){
+      document.documentElement.classList.toggle('dark', t === 'dark');
+      return true;
+    },
+    'vda63': function(t){
+      document.documentElement.setAttribute('data-theme', t);
+      var b = document.getElementById('themeBtn');
+      if (b) b.textContent = (t === 'dark') ? '\u{1F319}' : '\u2600\uFE0F';
+      return true;
     }
   };
   var CSS_URL = 'https://mycosmosshop.github.io/erp-portal/erp-dark.css';
