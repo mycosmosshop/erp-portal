@@ -55,6 +55,23 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .topbar .title i{font-size:1.15rem}
 .topbar .title span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar .sp{flex:1}
+/* Açık modül sekmeleri: iframe'ler zaten canlı tutuluyor, sekme sadece onları gösterir */
+.topbar .title.home{cursor:pointer;border-radius:8px;padding:.3rem .6rem;flex-shrink:0}
+.topbar .title.home:hover{background:var(--bg)}
+.topbar .title.home.act{background:var(--bg);box-shadow:inset 0 -2px 0 var(--acc,#0d6efd)}
+.tabs{display:flex;align-items:center;gap:.3rem;overflow-x:auto;overflow-y:hidden;flex:1;min-width:0;
+      scrollbar-width:thin;padding:0 .2rem}
+.tabs::-webkit-scrollbar{height:5px}
+.tabs::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.tab{display:flex;align-items:center;gap:.4rem;max-width:230px;flex-shrink:0;
+     padding:.32rem .5rem .32rem .6rem;border-radius:8px;cursor:pointer;font-size:.86rem;
+     border:1px solid transparent;background:transparent;color:inherit;white-space:nowrap}
+.tab:hover{background:var(--bg)}
+.tab.act{background:var(--bg);border-color:var(--border);font-weight:600;box-shadow:inset 0 -2px 0 currentColor}
+.tab .nm{overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.tab .x{border:0;background:transparent;color:inherit;opacity:.5;line-height:1;padding:0 .15rem;
+        border-radius:4px;cursor:pointer;font-size:1rem}
+.tab .x:hover{opacity:1;background:#e5393533;color:#e53935}
 .tb-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.38rem .7rem;font-size:.8rem;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem;transition:.12s;white-space:nowrap}
 .tb-btn:hover{color:var(--text);border-color:var(--blue)}
 #mobileMenuBtn{display:inline-flex}
@@ -172,8 +189,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 <div class="main">
   <div class="topbar">
     <button id="mobileMenuBtn" class="tb-btn" onclick="toggleSidebar()" title="Menüyü gizle/göster"><i class="bi bi-list"></i></button>
-    <div class="title" id="tbTitle"><i class="bi bi-grid-1x2-fill"></i><span>Ana Ekran</span></div>
-    <div class="sp"></div>
+    <div class="title home act" id="tbTitle" onclick="goHome()" title="Ana ekrana dön"><i class="bi bi-grid-1x2-fill"></i><span>Ana Ekran</span></div>
+    <div class="tabs" id="tbTabs"></div>
+    <div class="sp" style="flex:0"></div>
     <button class="tb-btn" id="tbReload" onclick="reloadCurrent()" style="display:none"><i class="bi bi-arrow-clockwise"></i><span class="lbl">Yenile</span></button>
     <a class="tb-btn" id="tbNew" href="#" target="_blank" rel="noopener" style="display:none"><i class="bi bi-box-arrow-up-right"></i><span class="lbl">Yeni Sekme</span></a>
     <button class="tb-btn" id="tbFull" onclick="fullscreenCurrent()" style="display:none"><i class="bi bi-arrows-fullscreen"></i></button>
@@ -510,7 +528,34 @@ function launch(id){
   document.getElementById('tbReload').style.display='';
   document.getElementById('tbFull').style.display='';
   const nw=document.getElementById('tbNew'); nw.style.display=''; nw.href=m.kaynak;
-  renderSidebar();
+  renderSidebar(); renderTabs();
+}
+// ── Açık modül sekmeleri ──
+function renderTabs(){
+  const host=document.getElementById('tbTabs'); if(!host) return;
+  const acik=[...document.querySelectorAll('.frame-wrap')].map(w=>w.dataset.mid);
+  host.innerHTML = acik.map(id=>{
+    const m=modules.find(x=>x.id===id); if(!m) return '';
+    const act = (id===currentId) ? ' act' : '';
+    return `<div class="tab${act}" data-mid="${id}" onclick="launch('${id}')" title="${(m.ad||'').replace(/"/g,'&quot;')}">`
+         + `<i class="bi ${m.ikon}" style="color:${m.renk}"></i><span class="nm">${m.ad}</span>`
+         + `<button class="x" onclick="closeTab('${id}',event)" title="Sekmeyi kapat">&times;</button></div>`;
+  }).join('');
+  const t=document.getElementById('tbTitle');
+  if(t) t.classList.toggle('act', !currentId);
+  const akt=host.querySelector('.tab.act');
+  if(akt && akt.scrollIntoView) akt.scrollIntoView({block:'nearest', inline:'nearest'});
+}
+function closeTab(id, ev){
+  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
+  const wrap=document.querySelector(`.frame-wrap[data-mid="${id}"]`);
+  if(wrap) wrap.remove();                       // iframe yok edilir → bellek geri alınır
+  if(currentId===id){
+    const kalan=[...document.querySelectorAll('.frame-wrap')].map(w=>w.dataset.mid);
+    if(kalan.length) launch(kalan[kalan.length-1]); else goHome();
+  } else {
+    renderTabs();
+  }
 }
 function goHome(){
   currentId=null;
@@ -519,7 +564,7 @@ function goHome(){
   document.getElementById('home').style.display='';
   document.getElementById('tbTitle').innerHTML='<i class="bi bi-grid-1x2-fill"></i><span>Ana Ekran</span>';
   ['tbReload','tbNew','tbFull'].forEach(i=>document.getElementById(i).style.display='none');
-  closeMobile(); renderSidebar();
+  closeMobile(); renderSidebar(); renderTabs();
 }
 function reloadCurrent(){
   const wrap=document.querySelector(`.frame-wrap[data-mid="${currentId}"]`);
