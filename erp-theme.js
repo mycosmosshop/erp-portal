@@ -39,7 +39,10 @@
     'supplier-system/balik-kilcigi',
     'supplier-system/5-neden-analizi',
     'supplier-system/8d-rapor',
-    'supplier-system/dof-yonetimi'
+    'supplier-system/dof-yonetimi',
+    'egitim-polivalans',
+    'pfmea',            // SPA + Tailwind: ortak Tailwind bolumu yetiyor
+    'gantt-chart'       // SPA + Tailwind
   ];
   // KENDI tema sistemi olan moduller: CSS basilmaz, modulun kendi anahtari surulur.
   // (Ustune yazmak iki paleti karistirir: govde koyu, baslik/hover acik kalir.)

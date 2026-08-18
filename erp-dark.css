@@ -722,3 +722,50 @@ baslik ve satir vurgusu acik kaliyordu). */
 :root[data-theme="dark"] [style*="#fafffd"]{
   background:#17351f!important; color:#a5d6a7!important;
 }
+
+/* -- egitim-polivalans ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .btn-ls,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .card,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .chart-card,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .dropdown-menu,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .modal,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .stat,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .tab{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] #persDD::-webkit-scrollbar-thumb,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .dropdown-menu button:hover,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .modal-body .info,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] th{
+  background:#16324a!important; color:#90caf9!important;
+}
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .b-ok,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .btn-dgr.done,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .persDDItem:hover,
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] tbody tr:hover{
+  background:#17351f!important; color:#a5d6a7!important;
+}
+:root[data-theme="dark"][data-erp-mod="egitim-polivalans"] .b-no{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}
+/* toplam 16 secici, 4 grup */
+
+/* Modullerden toplanan ek satir ici zemin renkleri (tonuna gore) */
+:root[data-theme="dark"] [style*="#e2e8f0"],
+:root[data-theme="dark"] [style*="#ecfeff"],
+:root[data-theme="dark"] [style*="#ede9fe"],
+:root[data-theme="dark"] [style*="#eef6ff"],
+:root[data-theme="dark"] [style*="#f5f3ff"]{
+  background:#16324a!important; color:#90caf9!important;
+}
+:root[data-theme="dark"] [style*="#faf5ff"]{
+  background:#2e2140!important; color:#ce93d8!important;
+}
+
+/* -- Proje Yonetimi (Gantt) ------------------------------------------------
+   Govde Tailwind ile uretiliyor (ortak Tailwind bolumu kapsar); yalniz sema
+   kapsayicisi kendi <style> kuralinda acik zemin kullaniyor. */
+:root[data-theme="dark"][data-erp-mod="gantt-chart"] .gantt-chart-container{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
+}
+
