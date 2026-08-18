@@ -67,7 +67,8 @@
 :root[data-theme="dark"] [style*="#f9f9f9"],:root[data-theme="dark"] [style*="#f0f0f0"],
 :root[data-theme="dark"] [style*="#f5f7fa"],:root[data-theme="dark"] [style*="#f0f2f5"],
 :root[data-theme="dark"] [style*="#f9fafb"],:root[data-theme="dark"] [style*="#f3f4f6"],
-:root[data-theme="dark"] [style*="#e5e7eb"],:root[data-theme="dark"] [style*="#f1f1f1"]{
+:root[data-theme="dark"] [style*="#e5e7eb"],:root[data-theme="dark"] [style*="#f1f1f1"],
+:root[data-theme="dark"] [style*="#ecf0f1"]{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important;
 }
 
@@ -84,7 +85,7 @@
 :root[data-theme="dark"] [style*="#e8eaf6"],:root[data-theme="dark"] [style*="#f0f4ff"],
 :root[data-theme="dark"] [style*="#d1ecf1"],:root[data-theme="dark"] [style*="#e8f4ff"],
 :root[data-theme="dark"] [style*="#e8f6ff"],:root[data-theme="dark"] [style*="#d9e1f2"],
-:root[data-theme="dark"] [style*="#f0f4f8"]{
+:root[data-theme="dark"] [style*="#f0f4f8"],:root[data-theme="dark"] [style*="#e8f4f8"]{
   background:#16324a!important; color:#90caf9!important; }
 :root[data-theme="dark"] [style*="#fff3cd"],:root[data-theme="dark"] [style*="#fff8e1"],
 :root[data-theme="dark"] [style*="#ffecb3"],:root[data-theme="dark"] [style*="#fffde7"],
@@ -228,3 +229,39 @@
 :root[data-theme="dark"][data-erp-mod="pscr"] .timeline h3,
 :root[data-theme="dark"][data-erp-mod="pscr"] .tbox h3{ color:#90caf9!important; }
 :root[data-theme="dark"][data-erp-mod="pscr"] .tclose:hover{ color:var(--k-metin)!important; }
+
+/* -- Teknik Resim Balonlama ------------------------------------------------
+   DIKKAT: #drawingCanvas bilerek BEYAZ birakilir — teknik cizim koyu zeminde
+   okunmaz (siyah cizgiler kaybolur). Kullanicinin isini bozmamak icin sart. */
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .container,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .dropdown-menu,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .dropdown-item,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .zoom-controls,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .tolerance-settings,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] table,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .modal-content,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .quick-btn{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
+}
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .controls-section,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .canvas-container,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .table-section,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .preview-container,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .quick-select{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
+}
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] tbody tr:hover,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .edit-num-btn:hover,
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .tolerance-range-table tbody tr:hover{
+  background:var(--k-yuzey3)!important;
+}
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .dropdown-item:hover{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] .calculated-limit{
+  background:#17351f!important; color:#a5d6a7!important;
+}
+/* Cizim tuvali: DEGISTIRILMEZ (beyaz kalir) */
+:root[data-theme="dark"][data-erp-mod="teknik-resim"] #drawingCanvas{
+  background:#fff!important;
+}

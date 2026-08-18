@@ -12,7 +12,8 @@ const temaSeciciler = new Set(
   css.replace(/\/\*[\s\S]*?\*\//g, '')
      .replace(/\{[^{}]*\}/g, '\n')
      .split(/[\n,]/)
-     .map(x => x.replace(/:root\[[^\]]*\]/g, '').replace(/\[data-erp-mod=[^\]]*\]/g, '').trim())
+     .map(x => x.replace(/:root\[[^\]]*\]/g, '').replace(/\[data-erp-mod=[^\]]*\]/g, '')
+                 .replace(/::?[a-z-]+(\([^)]*\))?/g, '').trim())   // :hover vb. ayikla (modul tarafinda da ayikliniyor)
      .filter(Boolean)
 );
 
@@ -76,8 +77,17 @@ function parlaklik(c) {
     }
     // <style> bloklarinda tanimli ACIK yuzeyler: nitelik secicileri bunlari
     // yakalamaz, gercek sinif/eleman adiyla eslenmeleri gerekir.
-    const modCss = [...s.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(x => x[1]).join('\n')
-                     .replace(/\/\*[\s\S]*?\*\//g, '');   // yorumlar secici sanilmasin
+    // Sayfa ici <style> + HARICI stylesheet'ler. Teknik Resim gibi moduller tum
+    // renklerini ayri bir .css dosyasinda tutuyor; yalniz HTML taranirsa modul
+    // "renksiz" gorunup sessizce kapsam disi kaliyordu.
+    let modCss = [...s.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(x => x[1]).join('\n');
+    for (const l of s.matchAll(/<link[^>]*rel=["']stylesheet["'][^>]*>/g)) {
+      const h = (l[0].match(/href=["']([^"']+)["']/) || [])[1];
+      if (!h || /^https?:\/\//i.test(h) && !h.includes('mycosmosshop.github.io')) continue;   // dis CDN atlanir
+      const tam = /^https?:\/\//i.test(h) ? h : (url + h.replace(/^\.?\//, ''));
+      try { modCss += '\n' + await indir(tam); } catch (e) { console.log('    (stylesheet okunamadi: ' + tam + ')'); }
+    }
+    modCss = modCss.replace(/\/\*[\s\S]*?\*\//g, '');   // yorumlar secici sanilmasin
     const eksikSecici = [];
     for (const r of modCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       const sec = r[1].trim(), gov = r[2];
