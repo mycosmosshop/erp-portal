@@ -690,7 +690,20 @@ function temayiYay(th, hedef){
   });
 }
 function aktifTema(){ return document.documentElement.getAttribute('data-theme') || 'dark'; }
+function _temaGecisKilit(){
+  const k=document.documentElement;
+  if(!document.getElementById('temaGecisStil')){
+    const st=document.createElement('style'); st.id='temaGecisStil';
+    st.textContent=':root.tema-gecis,:root.tema-gecis *,:root.tema-gecis *::before,:root.tema-gecis *::after{'
+                 +'transition:none!important;animation-duration:0s!important;animation-delay:0s!important}';
+    document.head.appendChild(st);
+  }
+  k.classList.add('tema-gecis');
+  clearTimeout(window.__temaGecisZ);
+  window.__temaGecisZ=setTimeout(()=>k.classList.remove('tema-gecis'),140);
+}
 function toggleTheme(){
+  _temaGecisKilit();                       // yanip sonmeyi onle
   const cur=document.documentElement.getAttribute('data-theme');
   const nx=cur==='dark'?'light':'dark';
   document.documentElement.setAttribute('data-theme',nx);

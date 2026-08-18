@@ -10,10 +10,61 @@
    localStorage anahtarı / postMessage). Modülün işlevine dokunulmaz.
    NOT: supplier-system kendi koyu temasını içinde taşır, listede DEĞİLDİR. */
 (function(){
-  var KOYU_MODULLER = ['kpi-takip', 'pscr', 'teknik-resim', 'kalite-kontrol'];
+  // Tema degisirken gecis animasyonlarini kisa sureligine kapat (yanip sonme onlenir).
+  // Kural ortak CSS'te; kendi temasi olan modullerde de calissin diye burada da yazilir.
+  function gecisiKilitle(){
+    try{
+      var k = document.documentElement;
+      if(!document.getElementById('erpTemaGecisStil')){
+        var st = document.createElement('style'); st.id = 'erpTemaGecisStil';
+        st.textContent = ':root.tema-gecis,:root.tema-gecis *,:root.tema-gecis *::before,:root.tema-gecis *::after{'
+                       + 'transition:none!important;animation-duration:0s!important;animation-delay:0s!important}';
+        (document.head || k).appendChild(st);
+      }
+      k.classList.add('tema-gecis');
+      clearTimeout(window.__erpTemaGecisZ);
+      window.__erpTemaGecisZ = setTimeout(function(){ k.classList.remove('tema-gecis'); }, 140);
+    }catch(e){}
+  }
+  // Ortak CSS ENJEKTE EDILECEK moduller (kendi temasi olmayanlar)
+  var KOYU_MODULLER = ['kpi-takip', 'pscr', 'teknik-resim'];
+  // KENDI tema sistemi olan moduller: CSS basilmaz, modulun kendi anahtari surulur.
+  // (Ustune yazmak iki paleti karistirir: govde koyu, baslik/hover acik kalir.)
+  var KENDI_TEMASI = {
+    'kalite-kontrol': function(t){
+      if (typeof window.applyTheme === 'function'){ window.applyTheme(t); return true; }
+      return false;                                  // modul JS'i henuz yuklenmedi
+    }
+  };
   var CSS_URL = 'https://mycosmosshop.github.io/erp-portal/erp-dark.css';
   try{
     var yol = (location.pathname.split('/').filter(Boolean)[0] || '').toLowerCase();
+
+    // ── Kendi temasi olan modul: yalnizca anahtarini sur ──
+    if(KENDI_TEMASI[yol]){
+      var kanca = KENDI_TEMASI[yol];
+      var surulen = null;
+      var sur = function(th){
+        if(!th) return;
+        gecisiKilitle();
+        surulen = th;
+        if(kanca(th)) return;                        // uygulandi
+        var dene = 0, zm = setInterval(function(){   // modul JS'i yuklenene kadar bekle
+          if(kanca(surulen) || ++dene > 40) clearInterval(zm);
+        }, 250);
+      };
+      var ilkT = document.documentElement.getAttribute('data-theme');
+      if(!ilkT){ try{ ilkT = localStorage.getItem('erp_portal_theme'); }catch(e){} }
+      sur(ilkT);
+      window.addEventListener('message', function(e){
+        if(e && e.data && e.data.tip === 'erp-tema') sur(e.data.tema);
+      });
+      window.addEventListener('storage', function(e){
+        if(e && e.key === 'erp_portal_theme') sur(e.newValue);
+      });
+      return;                                        // ortak CSS BASILMAZ
+    }
+
     if(KOYU_MODULLER.indexOf(yol) >= 0){
       var kok = document.documentElement;
       kok.setAttribute('data-erp-mod', yol);                 // modüle özgü kurallar için
@@ -25,6 +76,7 @@
 
       var uygula = function(t){
         if(!t) return;
+        gecisiKilitle();
         kok.setAttribute('data-theme', t);
         kok.setAttribute('data-bs-theme', t);
         try{

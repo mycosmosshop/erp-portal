@@ -158,6 +158,29 @@ function parlaklik(c) {
     assert.strictEqual(eksik.length, 0, mod + ' modulunde ' + eksik.length + ' acik zemin ortak temada ezilmiyor');
   }
 
+  // ── Kendi tema sistemi olan moduller ──
+  const kt = guard.match(/KENDI_TEMASI\s*=\s*\{([\s\S]*?)\n  \};/);
+  if (kt) {
+    const kendi = [...kt[1].matchAll(/'([^']+)'\s*:/g)].map(x => x[1]);
+    console.log('\nkendi temasini kullanan modul: ' + (kendi.join(', ') || '(yok)'));
+    for (const mod of kendi) {
+      assert.ok(!moduller.includes(mod),
+        mod + ' HEM ortak CSS listesinde HEM kendi tema listesinde — cift uygulama olur');
+      // Kancanin cagirdigi fonksiyon adini cikar (ornek: window.applyTheme)
+      const govde = kt[1].slice(kt[1].indexOf("'" + mod + "'"));
+      const fn = (govde.match(/window\.([A-Za-z_$][\w$]*)\s*===\s*'function'|typeof window\.([A-Za-z_$][\w$]*)/) || []);
+      const ad = fn[1] || fn[2];
+      assert.ok(ad, mod + ' kancasinda cagrilan fonksiyon adi cozulemedi');
+      let url2 = 'https://mycosmosshop.github.io/' + mod + '/';
+      let sayfa = await indir(url2);
+      const y2 = sayfa.match(/location\.replace\(\s*['"]([^'"]+?)['"]/);
+      if (y2 && sayfa.length < 4000) sayfa = await indir(url2 + y2[1].replace(/^\.?\//, ''));
+      assert.ok(new RegExp('function\\s+' + ad + '\\s*\\(').test(sayfa),
+        mod + ' modulunde "' + ad + '" fonksiyonu YOK — tema senkronu sessizce calismaz');
+      console.log('  ' + mod.padEnd(16) + ' kanca: ' + ad + '()  ✔');
+    }
+  }
+
   // Temel yuzey kurallari ve tema kaynaklari yerinde mi
   ['body', 'tbody tr', 'input', 'select', '.modal-dialog'].forEach(sec =>
     assert.ok(css.includes(sec), 'ortak temada "' + sec + '" kurali yok'));
