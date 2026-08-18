@@ -150,9 +150,36 @@
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .pa .btn:hover{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
 }
+:root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette-item{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
+}
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette-item:hover{
   background:var(--k-yuzey3)!important;
 }
+
+/* -- Tailwind yardimci siniflari -------------------------------------------
+   Bazi moduller (KPI Takip) govdesini JS ile uretir ve Tailwind yardimci
+   siniflarini kullanir; bu siniflar statik HTML'de gorunmedigi icin ayrica
+   eslenmeleri gerekir. */
+:root[data-theme="dark"] .bg-white{ background:var(--k-yuzey)!important; color:var(--k-metin)!important; }
+:root[data-theme="dark"] .bg-gray-50,:root[data-theme="dark"] .bg-gray-100,
+:root[data-theme="dark"] .bg-slate-50,:root[data-theme="dark"] .bg-slate-100,
+:root[data-theme="dark"] .bg-neutral-50,:root[data-theme="dark"] .bg-neutral-100,
+:root[data-theme="dark"] .bg-zinc-50,:root[data-theme="dark"] .bg-zinc-100{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important; }
+:root[data-theme="dark"] .bg-gray-200,:root[data-theme="dark"] .bg-slate-200{
+  background:var(--k-yuzey3)!important; color:var(--k-metin)!important; }
+:root[data-theme="dark"] .text-gray-900,:root[data-theme="dark"] .text-gray-800,
+:root[data-theme="dark"] .text-slate-900,:root[data-theme="dark"] .text-slate-800,
+:root[data-theme="dark"] .text-black{ color:var(--k-metin)!important; }
+:root[data-theme="dark"] .text-gray-700,:root[data-theme="dark"] .text-gray-600,
+:root[data-theme="dark"] .text-gray-500,:root[data-theme="dark"] .text-gray-400,
+:root[data-theme="dark"] .text-slate-700,:root[data-theme="dark"] .text-slate-600,
+:root[data-theme="dark"] .text-slate-500{ color:var(--k-metin2)!important; }
+:root[data-theme="dark"] .border-gray-200,:root[data-theme="dark"] .border-gray-300,
+:root[data-theme="dark"] .border-slate-200,:root[data-theme="dark"] .border-slate-300{
+  border-color:var(--k-kenar)!important; }
+:root[data-theme="dark"] .divide-gray-200 > *{ border-color:var(--k-kenar)!important; }
 
 /* -- PSCR Akis Semasi -----------------------------------------------------
    Akis semasinda renk ANLAM tasir (tetik / surec / aksiyon / rapor / portal).
@@ -185,3 +212,19 @@
 :root[data-theme="dark"][data-erp-mod="pscr"] .timeline{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
 }
+
+/* PSCR acilir kutusu (.tbox) ve okunmayan koyu metinler */
+:root[data-theme="dark"][data-erp-mod="pscr"] .tbox{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}
+:root[data-theme="dark"][data-erp-mod="pscr"] .tval,
+:root[data-theme="dark"][data-erp-mod="pscr"] .tl-label,
+:root[data-theme="dark"][data-erp-mod="pscr"] .d-question,
+:root[data-theme="dark"][data-erp-mod="pscr"] .form-links-section h4{
+  color:var(--k-metin)!important;
+}
+:root[data-theme="dark"][data-erp-mod="pscr"] .tl-time,
+:root[data-theme="dark"][data-erp-mod="pscr"] .tlabel{ color:var(--k-metin2)!important; }
+:root[data-theme="dark"][data-erp-mod="pscr"] .timeline h3,
+:root[data-theme="dark"][data-erp-mod="pscr"] .tbox h3{ color:#90caf9!important; }
+:root[data-theme="dark"][data-erp-mod="pscr"] .tclose:hover{ color:var(--k-metin)!important; }

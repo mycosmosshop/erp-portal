@@ -7,6 +7,14 @@ const fs = require('fs'), assert = require('assert'), https = require('https');
 
 const guard = fs.readFileSync(__dirname + '/erp-guard.js', 'utf8');
 const css = fs.readFileSync(__dirname + '/erp-dark.css', 'utf8').toLowerCase();
+// Ortak temadaki secicilerin TAM listesi (:root[...] on ekleri soyulur).
+const temaSeciciler = new Set(
+  css.replace(/\/\*[\s\S]*?\*\//g, '')
+     .replace(/\{[^{}]*\}/g, '\n')
+     .split(/[\n,]/)
+     .map(x => x.replace(/:root\[[^\]]*\]/g, '').replace(/\[data-erp-mod=[^\]]*\]/g, '').trim())
+     .filter(Boolean)
+);
 
 // 1) Listeyi guard'dan oku (kopya degil)
 const m = guard.match(/KOYU_MODULLER\s*=\s*\[([^\]]*)\]/);
@@ -80,7 +88,9 @@ function parlaklik(c) {
       if ((parlaklik(bgc) || 0) < 0.80) continue;      // yalnizca ACIK yuzeyler eslenmeli
       const ana = sec.split(',')[0].trim().split(':')[0].trim();
       if (!ana || ana.startsWith('@') || ana === 'body' || ana === 'html') continue;   // taban kural zaten var
-      if (!css.includes(ana.toLowerCase())) eksikSecici.push(ana);
+      // TAM secici eslesmesi: alt dize kontrolu ".tbox" yokken ".tbox h3" yuzunden
+      // "var" diyip gercek eksigi gizliyordu.
+      if (!temaSeciciler.has(ana.toLowerCase())) eksikSecici.push(ana);
     }
     if (eksikSecici.length) {
       console.log('    <style> secicileri eslenmemis: ' + [...new Set(eksikSecici)].join(', '));
