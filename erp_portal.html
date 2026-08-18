@@ -55,6 +55,21 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .topbar .title i{font-size:1.15rem}
 .topbar .title span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar .sp{flex:1}
+/* Veri tazeligi paneli */
+.tz{border:1px solid var(--border);border-radius:12px;background:var(--bg2);padding:.85rem 1rem;margin-bottom:1.1rem}
+.tz h3{margin:0 0 .1rem;font-size:.95rem;display:flex;align-items:center;gap:.45rem}
+.tz .alt{font-size:.78rem;opacity:.7;margin-bottom:.6rem}
+.tz table{width:100%;border-collapse:collapse;font-size:.82rem}
+.tz td{padding:.28rem .4rem;border-bottom:1px solid var(--border)}
+.tz tr:last-child td{border-bottom:0}
+.tz .ad{font-weight:600}
+.tz .gun{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tz .rz{display:inline-block;min-width:8px;height:8px;border-radius:50%;margin-right:.45rem}
+.tz .iyi .rz{background:#2e7d32} .tz .orta .rz{background:#ed6c02} .tz .kotu .rz{background:#c62828}
+.tz .iyi .gun{color:#4caf50} .tz .orta .gun{color:#ffa726} .tz .kotu .gun{color:#ef5350;font-weight:700}
+.tz .yenile{margin-left:auto;border:1px solid var(--border);background:transparent;color:inherit;
+            border-radius:7px;padding:.15rem .55rem;cursor:pointer;font-size:.78rem}
+.tz .yenile:hover{background:var(--bg)}
 /* Açık modül sekmeleri: iframe'ler zaten canlı tutuluyor, sekme sadece onları gösterir */
 .topbar .title.home{cursor:pointer;border-radius:8px;padding:.3rem .6rem;flex-shrink:0}
 .topbar .title.home:hover{background:var(--bg)}
@@ -477,7 +492,9 @@ function renderHome(){
       <button onclick="setHomeView('grid')" class="${view==='grid'?'active':''}" title="Kart görünümü"><i class="bi bi-grid-3x3-gap-fill"></i></button>
       <button onclick="setHomeView('list')" class="${view==='list'?'active':''}" title="Liste görünümü"><i class="bi bi-list-ul"></i></button>
     </div>
-  </div><div class="card-grid ${view==='list'?'list':''}">`;
+  </div>
+  <div id="tazelikPanel"></div>
+  <div class="card-grid ${view==='list'?'list':''}">`;
   Object.keys(cats).sort().forEach(c=>{
     html+=`<div class="cat-title">${c}</div>`;
     cats[c].forEach(m=>{
@@ -501,6 +518,75 @@ function renderHome(){
   });
   html+='</div>';
   home.innerHTML=html;
+  try{ tzYukle(); }catch(e){}   // veri tazeligi panelini doldur
+}
+// ── VERI TAZELIGI ────────────────────────────────────────────────────────
+// Kaynaklarin en son ne zaman guncellendigini gosterir. Zincirin bir halkasi
+// sessizce eskidiginde (LeanSys aktarimi calismadi, mal kabul durdu) uygulama
+// eski veriyle calisir ve kimse fark etmez — bu panel onu gorunur yapar.
+const TZ_URL = 'https://nnubrxbpthmkitueixbh.supabase.co/rest/v1';
+const TZ_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5udWJyeGJwdGhta2l0dWVpeGJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjI2MDIsImV4cCI6MjA5NjEzODYwMn0.CHZUOylf_q8kkOQbFf9VWZ6-doUTlynmAhahM2EuImE';
+const TZ_KAYNAK = [
+  { ad:'Tedarikçi PPM · Sanifoam', t:'supplier_monthly', z:'updated_at', f:'firma=eq.SANIFOAM', esik:[3,10] },
+  { ad:'Tedarikçi PPM · Saniteks', t:'supplier_monthly', z:'updated_at', f:'firma=eq.SANITEKS', esik:[7,30] },
+  { ad:'Tedarikçi PPM · Ultech',   t:'supplier_monthly', z:'updated_at', f:'firma=eq.ULTECH',   esik:[7,30] },
+  { ad:'Tedarikçi PPM · Corefix',  t:'supplier_monthly', z:'updated_at', f:'firma=eq.COREFIX',  esik:[7,30] },
+  { ad:'Tedarikçi PPM · GmbH',     t:'supplier_monthly', z:'updated_at', f:'firma=eq.GMBH',     esik:[7,30] },
+  { ad:'Mal kabul (giriş/iade)',   t:'mal_kabul',        z:'kayit_tarih', esik:[7,21] },
+  { ad:'Üretim özeti',             t:'uretim_ozet',      z:'updated_at',  esik:[3,10] },
+  { ad:'Operasyon kartları',       t:'operasyon_kartlari', z:'kayit_tarihi', esik:[30,90] }
+];
+let _tzSonVeri = null, _tzZaman = 0;
+
+async function tzOku(k){
+  const q = TZ_URL + '/' + k.t + '?select=' + k.z + (k.f ? '&' + k.f : '') +
+            '&order=' + k.z + '.desc.nullslast&limit=1';
+  const r = await fetch(q, { headers:{ apikey:TZ_KEY, Authorization:'Bearer '+TZ_KEY } });
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  const d = await r.json();
+  if(!d.length || !d[0][k.z]) return null;
+  return new Date(String(d[0][k.z]).replace(' ', 'T'));
+}
+
+function tzCiz(satirlar){
+  const el = document.getElementById('tazelikPanel');
+  if(!el) return;
+  const govde = satirlar.map(x=>{
+    if(x.hata) return `<tr class="kotu"><td class="ad"><span class="rz"></span>${x.ad}</td>
+      <td colspan="2" style="opacity:.75">okunamadı — ${x.hata}</td></tr>`;
+    if(x.gun == null) return `<tr class="kotu"><td class="ad"><span class="rz"></span>${x.ad}</td>
+      <td colspan="2" style="opacity:.75">kayıt yok</td></tr>`;
+    const sinif = x.gun <= x.esik[0] ? 'iyi' : (x.gun <= x.esik[1] ? 'orta' : 'kotu');
+    const tarih = x.tarih.toLocaleDateString('tr-TR');
+    return `<tr class="${sinif}"><td class="ad"><span class="rz"></span>${x.ad}</td>
+      <td style="opacity:.8">${tarih}</td>
+      <td class="gun">${x.gun === 0 ? 'bugün' : x.gun + ' gün önce'}</td></tr>`;
+  }).join('');
+  const kotu = satirlar.filter(x=> x.hata || x.gun == null || x.gun > x.esik[1]).length;
+  el.innerHTML = `<div class="tz">
+    <h3><i class="bi bi-broadcast"></i> Veri Tazeliği
+      ${kotu ? `<span style="color:#ef5350;font-size:.8rem;font-weight:700">· ${kotu} kaynak geride</span>` : ''}
+      <button class="yenile" onclick="tzYukle(true)"><i class="bi bi-arrow-clockwise"></i> yenile</button></h3>
+    <div class="alt">Kaynaklar en son ne zaman güncellendi. Kırmızı olan varsa uygulama ESKİ veriyle çalışıyor demektir.</div>
+    <table>${govde}</table></div>`;
+}
+
+async function tzYukle(zorla){
+  const el = document.getElementById('tazelikPanel');
+  if(!el) return;
+  if(!zorla && _tzSonVeri && (Date.now() - _tzZaman) < 300000){ tzCiz(_tzSonVeri); return; }
+  el.innerHTML = `<div class="tz"><h3><i class="bi bi-broadcast"></i> Veri Tazeliği</h3>
+    <div class="alt">okunuyor…</div></div>`;
+  const simdi = Date.now();
+  const satirlar = await Promise.all(TZ_KAYNAK.map(async k=>{
+    try{
+      const t = await tzOku(k);
+      return { ad:k.ad, esik:k.esik, tarih:t,
+               gun: t ? Math.floor((simdi - t.getTime()) / 86400000) : null };
+    }catch(e){ return { ad:k.ad, esik:k.esik, hata:e.message }; }
+  }));
+  _tzSonVeri = satirlar; _tzZaman = Date.now();
+  tzCiz(satirlar);
 }
 function setHomeView(v){ try{ localStorage.setItem('erp_portal_view', v); }catch(e){} renderHome(); }
 
