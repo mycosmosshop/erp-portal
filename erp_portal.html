@@ -543,7 +543,8 @@ function launch(id){
     wrap.innerHTML=`<div class="frame-loading"><div class="spinner"></div><div>${m.ad} yükleniyor…</div></div>`;
     const ifr=document.createElement('iframe');
     ifr.src=m.kaynak + (m.kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER;   // cache-bust: her oturumda guncel surum
-    ifr.addEventListener('load',()=>{ const l=wrap.querySelector('.frame-loading'); if(l) l.remove(); });
+    ifr.addEventListener('load',()=>{ const l=wrap.querySelector('.frame-loading'); if(l) l.remove();
+      temayiYay(aktifTema(), ifr); });                       // modul portalin temasiyla acilsin
     wrap.appendChild(ifr);
     document.getElementById('frameHost').appendChild(wrap);
   }
@@ -607,6 +608,7 @@ function popOut(mid, ev){
                       'width=1400,height=900,menubar=no,toolbar=no');
   if(!w){ alert('Tarayıcı açılır pencereyi engelledi.\nAdres çubuğundaki engelleme simgesinden bu siteye izin verin.'); return; }
   _popup[mid]=w; _popIzle();
+  try { w.addEventListener('load', () => temayiYay(aktifTema(), w)); } catch(e) {}
   const wrap=document.querySelector(`.frame-wrap[data-mid="${mid}"]`);
   if(wrap) wrap.remove();                       // aynı anda iki kopya OLMAZ (taşıma, kopyalama değil)
   if(currentId===mid){
@@ -667,13 +669,35 @@ function toggleFav(id){
 }
 
 // ── Tema / Rol / Mobil ──
+// Temayi ACIK MODULLERE yay. Portal ve moduller ayni origin oldugu icin iframe
+// belgesine dogrudan yazilabilir; ayrica postMessage gonderilir (modul kendi
+// temasini baska sekilde yonetiyorsa onu dinleyebilsin diye).
+function temayiYay(th, hedef){
+  const uygula = (win, doc) => {
+    try {
+      if (doc && doc.documentElement) {
+        doc.documentElement.setAttribute('data-theme', th);
+        doc.documentElement.setAttribute('data-bs-theme', th);
+      }
+      if (win) win.postMessage({ tip: 'erp-tema', tema: th }, '*');
+    } catch (e) { /* farkli origin / henuz yuklenmedi → sessiz gec */ }
+  };
+  if (hedef) { uygula(hedef.contentWindow || hedef, hedef.contentDocument || (hedef.document || null)); return; }
+  document.querySelectorAll('#frameHost iframe').forEach(f => uygula(f.contentWindow, f.contentDocument));
+  Object.keys(_popup).forEach(mid => {                       // ayri pencereye tasinanlar da
+    const w = _popup[mid];
+    if (w && !w.closed) { try { uygula(w, w.document); } catch (e) {} }
+  });
+}
+function aktifTema(){ return document.documentElement.getAttribute('data-theme') || 'dark'; }
 function toggleTheme(){
   const cur=document.documentElement.getAttribute('data-theme');
   const nx=cur==='dark'?'light':'dark';
   document.documentElement.setAttribute('data-theme',nx);
   document.documentElement.setAttribute('data-bs-theme',nx);
   document.getElementById('themeBtn').innerHTML=`<i class="bi ${nx==='dark'?'bi-moon-stars-fill':'bi-sun-fill'}"></i>`;
-  localStorage.setItem(LS_THEME,nx);
+  localStorage.setItem(LS_THEME,nx);   // ayni origin: moduller de bu anahtari gorur + storage olayi alir
+  temayiYay(nx);
 }
 function cycleRole(){
   const i=ROLES.indexOf(role);
@@ -835,6 +859,7 @@ function bootPortal(){
   document.documentElement.setAttribute('data-theme',th);
   document.documentElement.setAttribute('data-bs-theme',th);
   document.getElementById('themeBtn').innerHTML=`<i class="bi ${th==='dark'?'bi-moon-stars-fill':'bi-sun-fill'}"></i>`;
+  setTimeout(()=>temayiYay(th), 300);                        // acilista zaten yuklu moduller varsa
   role=localStorage.getItem(LS_ROLE)||'admin';
   document.getElementById('roleBtn').title='Profil: '+role;
   try{ favs=JSON.parse(localStorage.getItem(LS_FAVS)||'[]'); }catch(e){ favs=[]; }
