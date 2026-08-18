@@ -68,6 +68,7 @@
 :root[data-theme="dark"] [style*="#f5f7fa"],:root[data-theme="dark"] [style*="#f0f2f5"],
 :root[data-theme="dark"] [style*="#f9fafb"],:root[data-theme="dark"] [style*="#f3f4f6"],
 :root[data-theme="dark"] [style*="#e5e7eb"],:root[data-theme="dark"] [style*="#f1f1f1"],
+:root[data-theme="dark"] [style*="#f8fafc"],
 :root[data-theme="dark"] [style*="#ecf0f1"]{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important;
 }
@@ -97,6 +98,7 @@
 :root[data-theme="dark"] [style*="#ffcdd2"],:root[data-theme="dark"] [style*="#fdecea"],
 :root[data-theme="dark"] [style*="#ffe0e0"],:root[data-theme="dark"] [style*="#fff5f5"],
 :root[data-theme="dark"] [style*="#fce4ec"],:root[data-theme="dark"] [style*="#fff0f0"],
+:root[data-theme="dark"] [style*="#fdeaea"],
 :root[data-theme="dark"] [style*="#ffdadb"]{
   background:#3c1d20!important; color:#ef9a9a!important; }
 :root[data-theme="dark"] [style*="#f3e5f5"],:root[data-theme="dark"] [style*="#e1bee7"],
@@ -274,3 +276,43 @@
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] #drawingCanvas{
   background:#fff!important;
 }
+
+/* -- Kalite Kontrol (tek dosya: tum sekmeler) ------------------------------
+   .tgl .knob BILEREK acik birakilir — anahtarin hareketli topuzu, koyu
+   zeminde kaybolmamali. */
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .pd,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .notes,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .fc,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] table.dt8 .dm,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] table.res tr:nth-child(even) td{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
+}
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .meta,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] table.f td.l,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] table.dt8 .dn,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] table.antet th,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] table.docbox td:first-child{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
+}
+/* Tablo basliklari ve beyan kutusu: mavi tonunu korur */
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] table.data th,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] table.al th,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .imgcol h4,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .decl{
+  background:#16324a!important; color:#90caf9!important; border-color:#2c4c66!important;
+}
+/* Durum rozetleri: ANLAM tasir, tonlari korunur */
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .pill.ok,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .overall.ok{
+  background:#17351f!important; color:#a5d6a7!important;
+}
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .pill.ret,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .overall.ret,
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .decl.ret{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .pill.proses{
+  background:#3b3314!important; color:#ffe082!important;
+}
+/* Anahtar topuzu: DEGISTIRILMEZ */
+:root[data-theme="dark"][data-erp-mod="kalite-kontrol"] .tgl .knob{ background:#fff!important; }

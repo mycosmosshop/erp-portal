@@ -5,7 +5,7 @@
 //   calistir:  node test_koyu_tema.js
 const fs = require('fs'), assert = require('assert'), https = require('https');
 
-const guard = fs.readFileSync(__dirname + '/erp-guard.js', 'utf8');
+const guard = fs.readFileSync(__dirname + '/erp-theme.js', 'utf8');   // tema mantigi buraya tasindi
 const css = fs.readFileSync(__dirname + '/erp-dark.css', 'utf8').toLowerCase();
 // Ortak temadaki secicilerin TAM listesi (:root[...] on ekleri soyulur).
 // Ortak temada TANIMLI Tailwind zemin siniflarinin tam kumesi (alt dize
@@ -21,13 +21,13 @@ const temaSeciciler = new Set(
      .replace(/\{[^{}]*\}/g, '\n')
      .split(/[\n,]/)
      .map(x => x.replace(/:root\[[^\]]*\]/g, '').replace(/\[data-erp-mod=[^\]]*\]/g, '')
-                 .replace(/::?[a-z-]+(\([^)]*\))?/g, '').trim())   // :hover vb. ayikla (modul tarafinda da ayikliniyor)
+                 .replace(/::?[a-z-]+(\([^)]*\))?/g, '').replace(/\s+/g, ' ').trim())   // :hover vb. ayikla (modul tarafinda da ayikliniyor)
      .filter(Boolean)
 );
 
 // 1) Listeyi guard'dan oku (kopya degil)
 const m = guard.match(/KOYU_MODULLER\s*=\s*\[([^\]]*)\]/);
-assert(m, 'KOYU_MODULLER listesi bulunamadi');
+assert(m, 'KOYU_MODULLER listesi bulunamadi (erp-theme.js)');
 const moduller = [...m[1].matchAll(/'([^']+)'/g)].map(x => x[1]);
 console.log('koyu temaya alinmis modul:', moduller.join(', ') || '(yok)');
 assert.ok(moduller.length, 'liste bos — en az bir modul olmali');
@@ -58,10 +58,23 @@ function parlaklik(c) {
 (async () => {
   let toplamKontrol = 0;
   for (const mod of moduller) {
-    const url = 'https://mycosmosshop.github.io/' + mod + '/';
-    const s = await indir(url);
-    const kaynaklar = [...[...s.matchAll(/style="([^"]*)"/g)].map(x => x[1]),
-                       ...[...s.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(x => x[1])];
+    let url = 'https://mycosmosshop.github.io/' + mod + '/';
+    let s = await indir(url);
+    // Bazi moduller index.html'den JS ile asil dosyaya yonlendiriyor (ornek:
+    // kalite-kontrol -> kalite_kontrol.html). Izlenmezse modul "renksiz" gorunur.
+    const yon = s.match(/location\.replace\(\s*['"]([^'"]+?)['"]/);
+    if (yon && s.length < 4000) {
+      const hedef = yon[1].replace(/['"+\s].*$/, '');
+      url = url + hedef.replace(/^\.?\//, '');
+      s = await indir(url);
+      url = url.slice(0, url.lastIndexOf('/') + 1);
+      console.log('  ' + mod.padEnd(16) + ' (yonlendirme izlendi: ' + hedef + ')');
+    }
+    // Renk kontrolu YALNIZ satir ici style="" icin: bunlari tema nitelik
+    // secicileriyle eziyor, dolayisiyla rengin temada birebir gecmesi gerekir.
+    // <style> icindeki renkler sinif kurallariyla kapsanir (asagidaki secici
+    // kontrolu onu denetler); hex'lerini burada aramak yanlis alarm uretiyordu.
+    const kaynaklar = [...s.matchAll(/style="([^"]*)"/g)].map(x => x[1]);
     const renkler = new Map();
     for (const k of kaynaklar) {
       for (const g of k.matchAll(/background(?:-color)?\s*:\s*([^;}"]+)/gi)) {
@@ -104,7 +117,9 @@ function parlaklik(c) {
       const bgc = bg.trim().toLowerCase();
       if (bgc.startsWith('linear-gradient') || bgc.startsWith('url(') || bgc.startsWith('var(')) continue;
       if ((parlaklik(bgc) || 0) < 0.80) continue;      // yalnizca ACIK yuzeyler eslenmeli
-      const ana = sec.split(',')[0].trim().split(':')[0].trim();
+      // Tema tarafiyla AYNI normalizasyon: sozde siniflar ayiklanir ama kuyruk
+      // KESILMEZ ('table.res tr:nth-child(even) td' -> 'table.res tr td').
+      const ana = sec.split(',')[0].replace(/::?[a-z-]+(\([^)]*\))?/g, '').replace(/\s+/g, ' ').trim();
       if (!ana || ana.startsWith('@') || ana === 'body' || ana === 'html') continue;   // taban kural zaten var
       // TAM secici eslesmesi: alt dize kontrolu ".tbox" yokken ".tbox h3" yuzunden
       // "var" diyip gercek eksigi gizliyordu.
@@ -138,7 +153,7 @@ function parlaklik(c) {
       mod + ' modulunun JS paketinde ' + twEksik.size + ' Tailwind zemin sinifi ortak temada ezilmiyor');
 
     toplamKontrol += kontrol;
-    console.log('  ' + mod.padEnd(16) + ' acik zemin: ' + String(kontrol).padStart(2) +
+    console.log('  ' + mod.padEnd(16) + ' satir ici acik zemin: ' + String(kontrol).padStart(2) +
                 (eksik.length ? '   ✘ eksik: ' + eksik.join(', ') : '   ✔'));
     assert.strictEqual(eksik.length, 0, mod + ' modulunde ' + eksik.length + ' acik zemin ortak temada ezilmiyor');
   }
@@ -147,7 +162,10 @@ function parlaklik(c) {
   ['body', 'tbody tr', 'input', 'select', '.modal-dialog'].forEach(sec =>
     assert.ok(css.includes(sec), 'ortak temada "' + sec + '" kurali yok'));
   ["'message'", "'storage'", 'erp_portal_theme', 'data-erp-mod'].forEach(x =>
-    assert.ok(guard.includes(x), 'erp-guard icinde "' + x + '" yok'));
+    assert.ok(guard.includes(x), 'erp-theme.js icinde "' + x + '" yok'));
+  // Guard hala temayi yukluyor olmali (guard kullanan moduller icin)
+  const guardDosya = fs.readFileSync(__dirname + '/erp-guard.js', 'utf8');
+  assert.ok(guardDosya.includes('erp-theme.js'), 'erp-guard.js ortak temayi yuklemiyor');
 
   console.log('\nOK ortak koyu tema: ' + moduller.length + ' modul, ' + toplamKontrol +
               ' acik zeminin tamami esleniyor; tema kaynaklari ve modul kimligi yerinde');
