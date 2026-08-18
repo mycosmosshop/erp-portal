@@ -73,7 +73,11 @@ function parlaklik(c) {
     const eksikSecici = [];
     for (const r of modCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       const sec = r[1].trim(), gov = r[2];
-      if (!/background(-color)?\s*:\s*(#fff\b|#ffffff|white|#f9fafb|#f3f4f6|#f8f9fa|#f5f5f5|#f0f4f8)/i.test(gov)) continue;
+      const bg = (gov.match(/background(?:-color)?\s*:\s*([^;}"]+)/i) || [])[1];
+      if (!bg) continue;
+      const bgc = bg.trim().toLowerCase();
+      if (bgc.startsWith('linear-gradient') || bgc.startsWith('url(') || bgc.startsWith('var(')) continue;
+      if ((parlaklik(bgc) || 0) < 0.80) continue;      // yalnizca ACIK yuzeyler eslenmeli
       const ana = sec.split(',')[0].trim().split(':')[0].trim();
       if (!ana || ana.startsWith('@') || ana === 'body' || ana === 'html') continue;   // taban kural zaten var
       if (!css.includes(ana.toLowerCase())) eksikSecici.push(ana);
