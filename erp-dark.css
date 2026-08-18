@@ -1,6 +1,8 @@
 /* ══ ERP ORTAK KOYU TEMA ═══════════════════════════════════════════════════
-   erp-guard.js tarafından, yalnızca listeye alınmış modüllere enjekte edilir
-   (kontrollü yayılım: modül modül açılır, hepsi birden değişmez).
+   erp-guard.js tarafından,
+yalnızca listeye alınmış modüllere enjekte edilir
+   (kontrollü yayılım: modül modül açılır,
+hepsi birden değişmez).
 
    Tema portalın yazdığı  <html data-theme="dark">  ile devreye girer.
    Modül kimliği erp-guard tarafından  <html data-erp-mod="kpi-takip">  olarak
@@ -11,53 +13,33 @@
 
 /* Tema degisimi aninda gecisleri kapat: her oge kendi suresiyle animasyon
    yaptiginda zeminler sirayla degisip "yanip sonme" izlenimi veriyordu. */
-:root.tema-gecis, :root.tema-gecis *, :root.tema-gecis *::before, :root.tema-gecis *::after{
+:root.tema-gecis,
+:root.tema-gecis *,
+:root.tema-gecis *::before,
+:root.tema-gecis *::after{
   transition:none!important; animation-duration:0s!important; animation-delay:0s!important;
-}
-
-:root[data-theme="dark"]{
+}:root[data-theme="dark"]{
   --k-bg:#191c20; --k-yuzey:#23272d; --k-yuzey2:#2b3037; --k-yuzey3:#333941;
   --k-kenar:#3c434c; --k-metin:#e7e9ec; --k-metin2:#a8b0b9;
   color-scheme:dark;
-}
-
-/* ── ORTAK TABAN ────────────────────────────────────────────────────────── */
-:root[data-theme="dark"] body{ background:var(--k-bg)!important; color:var(--k-metin)!important; }
-
-:root[data-theme="dark"] .container,
+}/* ── ORTAK TABAN ────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] body{ background:var(--k-bg)!important; color:var(--k-metin)!important; }:root[data-theme="dark"] .container,
 :root[data-theme="dark"] .card,
 :root[data-theme="dark"] .panel,
 :root[data-theme="dark"] .box,
 :root[data-theme="dark"] .modal-dialog,
 :root[data-theme="dark"] .modal-content{
   background:var(--k-yuzey)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
-}
-:root[data-theme="dark"] .modal-overlay,
-:root[data-theme="dark"] .modal-backdrop{ background:rgba(0,0,0,.62)!important; }
-
-/* Tablolar */
-:root[data-theme="dark"] table{ color:var(--k-metin)!important; }
-:root[data-theme="dark"] td{ border-color:var(--k-kenar)!important; }
-:root[data-theme="dark"] tbody tr{ background:var(--k-yuzey)!important; }
-:root[data-theme="dark"] tbody tr:nth-child(even){ background:var(--k-yuzey2)!important; }
-:root[data-theme="dark"] tbody tr:hover{ background:var(--k-yuzey3)!important; }
-
-/* Form öğeleri */
+}:root[data-theme="dark"] .modal-overlay,
+:root[data-theme="dark"] .modal-backdrop{ background:rgba(0,0,0,.62)!important; }/* Tablolar */
+:root[data-theme="dark"] table{ color:var(--k-metin)!important; }:root[data-theme="dark"] td{ border-color:var(--k-kenar)!important; }:root[data-theme="dark"] tbody tr{ background:var(--k-yuzey)!important; }:root[data-theme="dark"] tbody tr:nth-child(even){ background:var(--k-yuzey2)!important; }:root[data-theme="dark"] tbody tr:hover{ background:var(--k-yuzey3)!important; }/* Form öğeleri */
 :root[data-theme="dark"] input,
 :root[data-theme="dark"] select,
 :root[data-theme="dark"] textarea{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
-}
-:root[data-theme="dark"] input::placeholder,
-:root[data-theme="dark"] textarea::placeholder{ color:var(--k-metin2)!important; }
-:root[data-theme="dark"] option{ background:var(--k-yuzey2); color:var(--k-metin); }
-:root[data-theme="dark"] [contenteditable="true"]{ color:var(--k-metin)!important; }
-
-/* Kaydırma çubuğu */
-:root[data-theme="dark"] ::-webkit-scrollbar-track{ background:var(--k-yuzey2)!important; }
-:root[data-theme="dark"] ::-webkit-scrollbar-thumb{ background:var(--k-kenar)!important; }
-
-/* ── SATIR İÇİ style="" RENKLERİ (JS şablonlarından gelenler) ───────────── */
+}:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder{ color:var(--k-metin2)!important; }:root[data-theme="dark"] option{ background:var(--k-yuzey2); color:var(--k-metin); }:root[data-theme="dark"] [contenteditable="true"]{ color:var(--k-metin)!important; }/* Kaydırma çubuğu */
+:root[data-theme="dark"] ::-webkit-scrollbar-track{ background:var(--k-yuzey2)!important; }:root[data-theme="dark"] ::-webkit-scrollbar-thumb{ background:var(--k-kenar)!important; }/* ── SATIR İÇİ style="" RENKLERİ (JS şablonlarından gelenler) ───────────── */
 :root[data-theme="dark"] [style*="background: white"],
 :root[data-theme="dark"] [style*="background:white"],
 :root[data-theme="dark"] [style*="background: #fff"],
@@ -65,75 +47,104 @@
 :root[data-theme="dark"] [style*="background-color: white"],
 :root[data-theme="dark"] [style*="background-color:#fff"]{
   background:var(--k-yuzey)!important; color:var(--k-metin)!important;
-}
-/* Açık gri yüzeyler */
-:root[data-theme="dark"] [style*="#f5f5f5"],:root[data-theme="dark"] [style*="#f8f9fa"],
-:root[data-theme="dark"] [style*="#fafafa"],:root[data-theme="dark"] [style*="#eceff1"],
-:root[data-theme="dark"] [style*="#e8e8e8"],:root[data-theme="dark"] [style*="#eee"],
-:root[data-theme="dark"] [style*="#f9f9f9"],:root[data-theme="dark"] [style*="#f0f0f0"],
-:root[data-theme="dark"] [style*="#f5f7fa"],:root[data-theme="dark"] [style*="#f0f2f5"],
-:root[data-theme="dark"] [style*="#f9fafb"],:root[data-theme="dark"] [style*="#f3f4f6"],
-:root[data-theme="dark"] [style*="#e5e7eb"],:root[data-theme="dark"] [style*="#f1f1f1"],
+}/* Açık gri yüzeyler */
+:root[data-theme="dark"] [style*="#f5f5f5"],
+:root[data-theme="dark"] [style*="#f8f9fa"],
+:root[data-theme="dark"] [style*="#fafafa"],
+:root[data-theme="dark"] [style*="#eceff1"],
+:root[data-theme="dark"] [style*="#e8e8e8"],
+:root[data-theme="dark"] [style*="#eee"],
+:root[data-theme="dark"] [style*="#f9f9f9"],
+:root[data-theme="dark"] [style*="#f0f0f0"],
+:root[data-theme="dark"] [style*="#f5f7fa"],
+:root[data-theme="dark"] [style*="#f0f2f5"],
+:root[data-theme="dark"] [style*="#f9fafb"],
+:root[data-theme="dark"] [style*="#f3f4f6"],
+:root[data-theme="dark"] [style*="#e5e7eb"],
+:root[data-theme="dark"] [style*="#f1f1f1"],
 :root[data-theme="dark"] [style*="#f8fafc"],
 :root[data-theme="dark"] [style*="#ecf0f1"]{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important;
-}
-
-/* Anlamlı pastel zeminler: RENGİ KORU, yalnızca koyulaştır.
-   (yeşil=iyi, kırmızı=sorun, sarı=uyarı, mavi=bilgi — anlam kaybolmasın) */
-:root[data-theme="dark"] [style*="#e8f5e9"],:root[data-theme="dark"] [style*="#c8e6c9"],
-:root[data-theme="dark"] [style*="#d4edda"],:root[data-theme="dark"] [style*="#f1f8f4"],
-:root[data-theme="dark"] [style*="#eef7ec"],:root[data-theme="dark"] [style*="#c6efce"]{
-  background:#17351f!important; color:#a5d6a7!important; }
-:root[data-theme="dark"] [style*="#e3f2fd"],:root[data-theme="dark"] [style*="#bbdefb"],
-:root[data-theme="dark"] [style*="#e0f2f1"],:root[data-theme="dark"] [style*="#b2dfdb"],
-:root[data-theme="dark"] [style*="#f0f8ff"],:root[data-theme="dark"] [style*="#f0f9ff"],
-:root[data-theme="dark"] [style*="#e1f5fe"],:root[data-theme="dark"] [style*="#e3f5ff"],
-:root[data-theme="dark"] [style*="#e8eaf6"],:root[data-theme="dark"] [style*="#f0f4ff"],
-:root[data-theme="dark"] [style*="#d1ecf1"],:root[data-theme="dark"] [style*="#e8f4ff"],
-:root[data-theme="dark"] [style*="#e8f6ff"],:root[data-theme="dark"] [style*="#d9e1f2"],
-:root[data-theme="dark"] [style*="#f0f4f8"],:root[data-theme="dark"] [style*="#e8f4f8"]{
-  background:#16324a!important; color:#90caf9!important; }
-:root[data-theme="dark"] [style*="#fff3cd"],:root[data-theme="dark"] [style*="#fff8e1"],
-:root[data-theme="dark"] [style*="#ffecb3"],:root[data-theme="dark"] [style*="#fffde7"],
-:root[data-theme="dark"] [style*="#fff9c4"],:root[data-theme="dark"] [style*="#fffbf0"],
-:root[data-theme="dark"] [style*="#fff3e0"],:root[data-theme="dark"] [style*="#ffe0b2"],
+}/* Anlamlı pastel zeminler: RENGİ KORU,
+yalnızca koyulaştır.
+   (yeşil=iyi,
+kırmızı=sorun,
+sarı=uyarı,
+mavi=bilgi — anlam kaybolmasın) */
+:root[data-theme="dark"] [style*="#e8f5e9"],
+:root[data-theme="dark"] [style*="#c8e6c9"],
+:root[data-theme="dark"] [style*="#d4edda"],
+:root[data-theme="dark"] [style*="#f1f8f4"],
+:root[data-theme="dark"] [style*="#eef7ec"],
+:root[data-theme="dark"] [style*="#c6efce"]{
+  background:#17351f!important; color:#a5d6a7!important; }:root[data-theme="dark"] [style*="#e3f2fd"],
+:root[data-theme="dark"] [style*="#bbdefb"],
+:root[data-theme="dark"] [style*="#e0f2f1"],
+:root[data-theme="dark"] [style*="#b2dfdb"],
+:root[data-theme="dark"] [style*="#f0f8ff"],
+:root[data-theme="dark"] [style*="#f0f9ff"],
+:root[data-theme="dark"] [style*="#e1f5fe"],
+:root[data-theme="dark"] [style*="#e3f5ff"],
+:root[data-theme="dark"] [style*="#e8eaf6"],
+:root[data-theme="dark"] [style*="#f0f4ff"],
+:root[data-theme="dark"] [style*="#d1ecf1"],
+:root[data-theme="dark"] [style*="#e8f4ff"],
+:root[data-theme="dark"] [style*="#e8f6ff"],
+:root[data-theme="dark"] [style*="#d9e1f2"],
+:root[data-theme="dark"] [style*="#f0f4f8"],
+:root[data-theme="dark"] [style*="#e8f4f8"]{
+  background:#16324a!important; color:#90caf9!important; }:root[data-theme="dark"] [style*="#fff3cd"],
+:root[data-theme="dark"] [style*="#fff8e1"],
+:root[data-theme="dark"] [style*="#ffecb3"],
+:root[data-theme="dark"] [style*="#fffde7"],
+:root[data-theme="dark"] [style*="#fff9c4"],
+:root[data-theme="dark"] [style*="#fffbf0"],
+:root[data-theme="dark"] [style*="#fff3e0"],
+:root[data-theme="dark"] [style*="#ffe0b2"],
 :root[data-theme="dark"] [style*="#fff2cc"]{
-  background:#3b3314!important; color:#ffe082!important; }
-:root[data-theme="dark"] [style*="#ffebee"],:root[data-theme="dark"] [style*="#f8d7da"],
-:root[data-theme="dark"] [style*="#ffcdd2"],:root[data-theme="dark"] [style*="#fdecea"],
-:root[data-theme="dark"] [style*="#ffe0e0"],:root[data-theme="dark"] [style*="#fff5f5"],
-:root[data-theme="dark"] [style*="#fce4ec"],:root[data-theme="dark"] [style*="#fff0f0"],
+  background:#3b3314!important; color:#ffe082!important; }:root[data-theme="dark"] [style*="#ffebee"],
+:root[data-theme="dark"] [style*="#f8d7da"],
+:root[data-theme="dark"] [style*="#ffcdd2"],
+:root[data-theme="dark"] [style*="#fdecea"],
+:root[data-theme="dark"] [style*="#ffe0e0"],
+:root[data-theme="dark"] [style*="#fff5f5"],
+:root[data-theme="dark"] [style*="#fce4ec"],
+:root[data-theme="dark"] [style*="#fff0f0"],
 :root[data-theme="dark"] [style*="#fdeaea"],
 :root[data-theme="dark"] [style*="#ffdadb"]{
-  background:#3c1d20!important; color:#ef9a9a!important; }
-:root[data-theme="dark"] [style*="#f3e5f5"],:root[data-theme="dark"] [style*="#e1bee7"],
-:root[data-theme="dark"] [style*="#ede7f6"],:root[data-theme="dark"] [style*="#f3eef9"],
+  background:#3c1d20!important; color:#ef9a9a!important; }:root[data-theme="dark"] [style*="#f3e5f5"],
+:root[data-theme="dark"] [style*="#e1bee7"],
+:root[data-theme="dark"] [style*="#ede7f6"],
+:root[data-theme="dark"] [style*="#f3eef9"],
 :root[data-theme="dark"] [style*="#e2d4f0"]{
-  background:#2e2140!important; color:#ce93d8!important; }
-
-/* Açık zemine göre yazılmış koyu metin renkleri aydınlatılır */
-:root[data-theme="dark"] [style*="color: #333"],:root[data-theme="dark"] [style*="color:#333"],
-:root[data-theme="dark"] [style*="color: #444"],:root[data-theme="dark"] [style*="color:#444"],
-:root[data-theme="dark"] [style*="color: #212529"],:root[data-theme="dark"] [style*="color:#212529"],
-:root[data-theme="dark"] [style*="color: black"],:root[data-theme="dark"] [style*="color:#000"]{
-  color:var(--k-metin)!important; }
-:root[data-theme="dark"] [style*="color: #555"],:root[data-theme="dark"] [style*="color:#555"],
-:root[data-theme="dark"] [style*="color: #666"],:root[data-theme="dark"] [style*="color:#666"],
-:root[data-theme="dark"] [style*="color: #777"],:root[data-theme="dark"] [style*="color:#888"],
-:root[data-theme="dark"] [style*="color: #607d8b"]{ color:var(--k-metin2)!important; }
-:root[data-theme="dark"] [style*="color: #1e3c72"],:root[data-theme="dark"] [style*="color:#1e3c72"],
-:root[data-theme="dark"] [style*="color: #37474f"],:root[data-theme="dark"] [style*="color:#0d47a1"]{
-  color:#8ab4f8!important; }
-
-/* Kenarlıklar */
-:root[data-theme="dark"] [style*="1px solid #ddd"],:root[data-theme="dark"] [style*="1px solid #eee"],
-:root[data-theme="dark"] [style*="1px solid #e0e0e0"],:root[data-theme="dark"] [style*="1px solid #ccc"],
-:root[data-theme="dark"] [style*="1px solid #e5e7eb"]{ border-color:var(--k-kenar)!important; }
-
-/* Doygun vurgu renkleri (butonlar, durum rozetleri) koyu zeminde zaten okunur:
-   bilerek DEĞİŞTİRİLMEZ, anlamlarını korurlar. */
-
+  background:#2e2140!important; color:#ce93d8!important; }/* Açık zemine göre yazılmış koyu metin renkleri aydınlatılır */
+:root[data-theme="dark"] [style*="color: #333"],
+:root[data-theme="dark"] [style*="color:#333"],
+:root[data-theme="dark"] [style*="color: #444"],
+:root[data-theme="dark"] [style*="color:#444"],
+:root[data-theme="dark"] [style*="color: #212529"],
+:root[data-theme="dark"] [style*="color:#212529"],
+:root[data-theme="dark"] [style*="color: black"],
+:root[data-theme="dark"] [style*="color:#000"]{
+  color:var(--k-metin)!important; }:root[data-theme="dark"] [style*="color: #555"],
+:root[data-theme="dark"] [style*="color:#555"],
+:root[data-theme="dark"] [style*="color: #666"],
+:root[data-theme="dark"] [style*="color:#666"],
+:root[data-theme="dark"] [style*="color: #777"],
+:root[data-theme="dark"] [style*="color:#888"],
+:root[data-theme="dark"] [style*="color: #607d8b"]{ color:var(--k-metin2)!important; }:root[data-theme="dark"] [style*="color: #1e3c72"],
+:root[data-theme="dark"] [style*="color:#1e3c72"],
+:root[data-theme="dark"] [style*="color: #37474f"],
+:root[data-theme="dark"] [style*="color:#0d47a1"]{
+  color:#8ab4f8!important; }/* Kenarlıklar */
+:root[data-theme="dark"] [style*="1px solid #ddd"],
+:root[data-theme="dark"] [style*="1px solid #eee"],
+:root[data-theme="dark"] [style*="1px solid #e0e0e0"],
+:root[data-theme="dark"] [style*="1px solid #ccc"],
+:root[data-theme="dark"] [style*="1px solid #e5e7eb"]{ border-color:var(--k-kenar)!important; }/* Doygun vurgu renkleri (butonlar,
+durum rozetleri) koyu zeminde zaten okunur:
+   bilerek DEĞİŞTİRİLMEZ,
+anlamlarını korurlar. */
 
 /* ══ MODÜLE ÖZGÜ BÖLÜMLER ═════════════════════════════════════════════════
    Aşağısı yalnızca ilgili modülde uygulanır (data-erp-mod).
@@ -146,8 +157,7 @@
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .pa .sel,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .pa .btn{
   background:var(--k-yuzey)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
-}
-:root[data-theme="dark"][data-erp-mod="kpi-takip"] .fishbone-diagram .category-card,
+}:root[data-theme="dark"][data-erp-mod="kpi-takip"] .fishbone-diagram .category-card,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-canvas,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-result-panel-out,
@@ -158,48 +168,51 @@
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .pa .tbl th,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .pa .btn:hover{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
-}
-:root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette-item{
+}:root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette-item{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
-}
-:root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette-item:hover{
+}:root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette-item:hover{
   background:var(--k-yuzey3)!important;
-}
-
-/* -- Tailwind yardimci siniflari -------------------------------------------
+}/* -- Tailwind yardimci siniflari -------------------------------------------
    Bazi moduller (KPI Takip) govdesini JS ile uretir ve Tailwind yardimci
    siniflarini kullanir; bu siniflar statik HTML'de gorunmedigi icin ayrica
    eslenmeleri gerekir. */
-:root[data-theme="dark"] .bg-white{ background:var(--k-yuzey)!important; color:var(--k-metin)!important; }
-:root[data-theme="dark"] .bg-gray-50,:root[data-theme="dark"] .bg-gray-100,
-:root[data-theme="dark"] .bg-slate-50,:root[data-theme="dark"] .bg-slate-100,
-:root[data-theme="dark"] .bg-neutral-50,:root[data-theme="dark"] .bg-neutral-100,
-:root[data-theme="dark"] .bg-zinc-50,:root[data-theme="dark"] .bg-zinc-100{
-  background:var(--k-yuzey2)!important; color:var(--k-metin)!important; }
-:root[data-theme="dark"] .bg-gray-200,:root[data-theme="dark"] .bg-slate-200,
-:root[data-theme="dark"] .bg-gray-300,:root[data-theme="dark"] .bg-slate-300{
-  background:var(--k-yuzey3)!important; color:var(--k-metin)!important; }
-/* Daha koyu gri tonlari zaten koyu zeminde durur; yalniz metin okunur kalsin */
-:root[data-theme="dark"] .bg-gray-400,:root[data-theme="dark"] .bg-gray-500{
-  background:#4a525c!important; color:var(--k-metin)!important; }
-:root[data-theme="dark"] .text-gray-900,:root[data-theme="dark"] .text-gray-800,
-:root[data-theme="dark"] .text-slate-900,:root[data-theme="dark"] .text-slate-800,
-:root[data-theme="dark"] .text-black{ color:var(--k-metin)!important; }
-:root[data-theme="dark"] .text-gray-700,:root[data-theme="dark"] .text-gray-600,
-:root[data-theme="dark"] .text-gray-500,:root[data-theme="dark"] .text-gray-400,
-:root[data-theme="dark"] .text-slate-700,:root[data-theme="dark"] .text-slate-600,
-:root[data-theme="dark"] .text-slate-500{ color:var(--k-metin2)!important; }
-:root[data-theme="dark"] .border-gray-100,:root[data-theme="dark"] .border-gray-200,
-:root[data-theme="dark"] .border-gray-300,:root[data-theme="dark"] .border-gray-400,
-:root[data-theme="dark"] .border-slate-200,:root[data-theme="dark"] .border-slate-300{
-  border-color:var(--k-kenar)!important; }
-/* Tailwind'in hazir bilesen zeminleri (kart/panel/başlık cubugu) */
-:root[data-theme="dark"] .bg-gray-50\/50,:root[data-theme="dark"] .bg-white\/80,
-:root[data-theme="dark"] .bg-white\/90,:root[data-theme="dark"] .bg-white\/95{
-  background:var(--k-yuzey)!important; color:var(--k-metin)!important; }
-:root[data-theme="dark"] .divide-gray-200 > *{ border-color:var(--k-kenar)!important; }
-
-/* -- PSCR Akis Semasi -----------------------------------------------------
+:root[data-theme="dark"] .bg-white{ background:var(--k-yuzey)!important; color:var(--k-metin)!important; }:root[data-theme="dark"] .bg-gray-50,
+:root[data-theme="dark"] .bg-gray-100,
+:root[data-theme="dark"] .bg-slate-50,
+:root[data-theme="dark"] .bg-slate-100,
+:root[data-theme="dark"] .bg-neutral-50,
+:root[data-theme="dark"] .bg-neutral-100,
+:root[data-theme="dark"] .bg-zinc-50,
+:root[data-theme="dark"] .bg-zinc-100{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important; }:root[data-theme="dark"] .bg-gray-200,
+:root[data-theme="dark"] .bg-slate-200,
+:root[data-theme="dark"] .bg-gray-300,
+:root[data-theme="dark"] .bg-slate-300{
+  background:var(--k-yuzey3)!important; color:var(--k-metin)!important; }/* Daha koyu gri tonlari zaten koyu zeminde durur; yalniz metin okunur kalsin */
+:root[data-theme="dark"] .bg-gray-400,
+:root[data-theme="dark"] .bg-gray-500{
+  background:#4a525c!important; color:var(--k-metin)!important; }:root[data-theme="dark"] .text-gray-900,
+:root[data-theme="dark"] .text-gray-800,
+:root[data-theme="dark"] .text-slate-900,
+:root[data-theme="dark"] .text-slate-800,
+:root[data-theme="dark"] .text-black{ color:var(--k-metin)!important; }:root[data-theme="dark"] .text-gray-700,
+:root[data-theme="dark"] .text-gray-600,
+:root[data-theme="dark"] .text-gray-500,
+:root[data-theme="dark"] .text-gray-400,
+:root[data-theme="dark"] .text-slate-700,
+:root[data-theme="dark"] .text-slate-600,
+:root[data-theme="dark"] .text-slate-500{ color:var(--k-metin2)!important; }:root[data-theme="dark"] .border-gray-100,
+:root[data-theme="dark"] .border-gray-200,
+:root[data-theme="dark"] .border-gray-300,
+:root[data-theme="dark"] .border-gray-400,
+:root[data-theme="dark"] .border-slate-200,
+:root[data-theme="dark"] .border-slate-300{
+  border-color:var(--k-kenar)!important; }/* Tailwind'in hazir bilesen zeminleri (kart/panel/başlık cubugu) */
+:root[data-theme="dark"] .bg-gray-50\/50,
+:root[data-theme="dark"] .bg-white\/80,
+:root[data-theme="dark"] .bg-white\/90,
+:root[data-theme="dark"] .bg-white\/95{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important; }:root[data-theme="dark"] .divide-gray-200 > *{ border-color:var(--k-kenar)!important; }/* -- PSCR Akis Semasi -----------------------------------------------------
    Akis semasinda renk ANLAM tasir (tetik / surec / aksiyon / rapor / portal).
    Bu yuzden gri yapilmaz; her tur kendi tonunun koyu karsiligini alir. */
 :root[data-theme="dark"][data-erp-mod="pscr"] .node-trigger,
@@ -208,46 +221,32 @@
 :root[data-theme="dark"][data-erp-mod="pscr"] .tbox h3,
 :root[data-theme="dark"][data-erp-mod="pscr"] .form-btn{
   background:#16324a!important; color:#90caf9!important; border-color:#2c4c66!important;
-}
-:root[data-theme="dark"][data-erp-mod="pscr"] .node-process,
+}:root[data-theme="dark"][data-erp-mod="pscr"] .node-process,
 :root[data-theme="dark"][data-erp-mod="pscr"] .fc-green{
   background:#17351f!important; color:#a5d6a7!important;
-}
-:root[data-theme="dark"][data-erp-mod="pscr"] .node-action,
+}:root[data-theme="dark"][data-erp-mod="pscr"] .node-action,
 :root[data-theme="dark"][data-erp-mod="pscr"] .fc-red{
   background:#3c1d20!important; color:#ef9a9a!important;
-}
-:root[data-theme="dark"][data-erp-mod="pscr"] .node-report,
+}:root[data-theme="dark"][data-erp-mod="pscr"] .node-report,
 :root[data-theme="dark"][data-erp-mod="pscr"] .fc-purple{
   background:#2e2140!important; color:#ce93d8!important;
-}
-:root[data-theme="dark"][data-erp-mod="pscr"] .fc-proc,
+}:root[data-theme="dark"][data-erp-mod="pscr"] .fc-proc,
 :root[data-theme="dark"][data-erp-mod="pscr"] .form-btn.proc{
   background:#3b3314!important; color:#ffe082!important;
-}
-:root[data-theme="dark"][data-erp-mod="pscr"] .tl-bar-wrap,
+}:root[data-theme="dark"][data-erp-mod="pscr"] .tl-bar-wrap,
 :root[data-theme="dark"][data-erp-mod="pscr"] .legend,
 :root[data-theme="dark"][data-erp-mod="pscr"] .timeline{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
-}
-
-/* PSCR acilir kutusu (.tbox) ve okunmayan koyu metinler */
+}/* PSCR acilir kutusu (.tbox) ve okunmayan koyu metinler */
 :root[data-theme="dark"][data-erp-mod="pscr"] .tbox{
   background:var(--k-yuzey)!important; color:var(--k-metin)!important;
-}
-:root[data-theme="dark"][data-erp-mod="pscr"] .tval,
+}:root[data-theme="dark"][data-erp-mod="pscr"] .tval,
 :root[data-theme="dark"][data-erp-mod="pscr"] .tl-label,
 :root[data-theme="dark"][data-erp-mod="pscr"] .d-question,
 :root[data-theme="dark"][data-erp-mod="pscr"] .form-links-section h4{
   color:var(--k-metin)!important;
-}
-:root[data-theme="dark"][data-erp-mod="pscr"] .tl-time,
-:root[data-theme="dark"][data-erp-mod="pscr"] .tlabel{ color:var(--k-metin2)!important; }
-:root[data-theme="dark"][data-erp-mod="pscr"] .timeline h3,
-:root[data-theme="dark"][data-erp-mod="pscr"] .tbox h3{ color:#90caf9!important; }
-:root[data-theme="dark"][data-erp-mod="pscr"] .tclose:hover{ color:var(--k-metin)!important; }
-
-/* -- Teknik Resim Balonlama ------------------------------------------------
+}:root[data-theme="dark"][data-erp-mod="pscr"] .tl-time,
+:root[data-theme="dark"][data-erp-mod="pscr"] .tlabel{ color:var(--k-metin2)!important; }:root[data-theme="dark"][data-erp-mod="pscr"] .timeline h3{ color:#90caf9!important; }:root[data-theme="dark"][data-erp-mod="pscr"] .tclose:hover{ color:var(--k-metin)!important; }/* -- Teknik Resim Balonlama ------------------------------------------------
    DIKKAT: #drawingCanvas bilerek BEYAZ birakilir — teknik cizim koyu zeminde
    okunmaz (siyah cizgiler kaybolur). Kullanicinin isini bozmamak icin sart. */
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .container,
@@ -259,31 +258,467 @@
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .modal-content,
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .quick-btn{
   background:var(--k-yuzey)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
-}
-:root[data-theme="dark"][data-erp-mod="teknik-resim"] .controls-section,
+}:root[data-theme="dark"][data-erp-mod="teknik-resim"] .controls-section,
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .canvas-container,
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .table-section,
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .preview-container,
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .quick-select{
   background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
-}
-:root[data-theme="dark"][data-erp-mod="teknik-resim"] tbody tr:hover,
+}:root[data-theme="dark"][data-erp-mod="teknik-resim"] tbody tr:hover,
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .edit-num-btn:hover,
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] .tolerance-range-table tbody tr:hover{
   background:var(--k-yuzey3)!important;
-}
-:root[data-theme="dark"][data-erp-mod="teknik-resim"] .dropdown-item:hover{
+}:root[data-theme="dark"][data-erp-mod="teknik-resim"] .dropdown-item:hover{
   background:#3c1d20!important; color:#ef9a9a!important;
-}
-:root[data-theme="dark"][data-erp-mod="teknik-resim"] .calculated-limit{
+}:root[data-theme="dark"][data-erp-mod="teknik-resim"] .calculated-limit{
   background:#17351f!important; color:#a5d6a7!important;
-}
-/* Cizim tuvali: DEGISTIRILMEZ (beyaz kalir) */
+}/* Cizim tuvali: DEGISTIRILMEZ (beyaz kalir) */
 :root[data-theme="dark"][data-erp-mod="teknik-resim"] #drawingCanvas{
   background:#fff!important;
-}
-
-/* NOT: Kalite Kontrol burada YOK — modulun kendi tema sistemi var
+}/* NOT: Kalite Kontrol burada YOK — modulun kendi tema sistemi var
    (body.light + CSS degiskenleri + applyTheme). erp-theme.js o modulde CSS
-   basmaz, yalnizca kendi anahtarini surer. Ustune yazmak iki paleti
-   karistiriyordu (govde koyu, baslik ve satir vurgusu acik kaliyordu). */
+   basmaz,
+yalnizca kendi anahtarini surer. Ustune yazmak iki paleti
+   karistiriyordu (govde koyu,
+baslik ve satir vurgusu acik kaliyordu). */
+
+/* -- supplier-system/coa-arsiv ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .card,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .modal-content,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .multiselect-actions,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .multiselect-dropdown,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .multiselect-header,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .multiselect-option:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .multiselect-search,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .scanner-container,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .settings-section,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .stat-card,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .supplier-dropdown-count,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .supplier-dropdown-list,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .upload-area,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .year-modal-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] th,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] tr:hover{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .file-name,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .scanner-status.success,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .upload-area.has-file,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .upload-area:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .year-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .year-tag:not(.active),
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .year-tag:not(.active):hover{
+  background:#17351f!important; color:#a5d6a7!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .scanner-option,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .scanner-status.info,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .supplier-dropdown-item.selected,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .supplier-dropdown-item:hover{
+  background:#16324a!important; color:#90caf9!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .btn-secondary,
+:root[data-theme="dark"][data-erp-mod="supplier-system/coa-arsiv"] .year-modal-btns .btn-cancel{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important;
+}/* toplam 29 secici,
+4 grup */
+
+/* -- supplier-system/uygunsuzluk-analizi ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] #ppmChartBox,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] #ppmDrillDown h3,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] #uaFiltreBox,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] #uaSnapBox,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bb-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bb-pick-item,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bp-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bp-pick-item,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-ctrl-group input,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-sel-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-sel-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .btn-reset,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cal-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cal-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cari-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cari-selected,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .chord-ctrl-group input,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .chord-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cohort-ctrl-group input,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cohort-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cohort-mode-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cpm-all-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cpm-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .etkt-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .etkt-trigger,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .filter-card,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .filter-group input,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .filter-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .funnel-ctrl-group input,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .funnel-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .gb-ctrl-group input[type=range],
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .gb-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-pp-header button,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-pp-header input,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .loading-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .multi-analyze-bar button,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .page-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .pareto-options select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-ctrl-group input,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-sel-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-sel-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-stat-card,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .ppm-seg-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-sel-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-selector-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sc-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sc-pick-item,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-search,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-search:focus,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-trigger,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .stat-card,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tab-btn:hover:not(.active),
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tab-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tabs,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tespit-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tespit-selected,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tm-ctrl-group select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tm-pick-item,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .upload-card{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] #paretoSelChips,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bb-insight,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bb-pick-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .breakdown-item,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-sel-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-sel-item.bsi-active,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-sel-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bsw-sel-title,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cari-clear-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cari-list-item.selected,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cari-list-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .chord-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .drop-zone,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .drop-zone.dragover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .drop-zone:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .funnel-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .funnel-legend,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-sel-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-sel-item.psi-active,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-sel-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .polar-sel-title,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .psc-clear,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .psc-clear:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-group-item.rgi-selected,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-group-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-sel-title,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tab-btn.active,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tespit-list-item.ty-selected,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tespit-list-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] tbody tr:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] tbody tr:nth-child(even){
+  background:#2e2140!important; color:#ce93d8!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] #ppmDrillTable th,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] #ppmDrillTable tr:hover td,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .badge-blue,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bb-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bb-pick-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bp-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bp-insight,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bp-pick-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bp-pick-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bp-stats-table tr:hover td,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .btn-8d-link,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cal-insight,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cpm-all-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cpm-btn-cancel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cpm-btn-cancel:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cpm-item.cpm-selected,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cpm-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-pick-item.hpi-sel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-pick-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-pick-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-pp-header button:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-pp-header small,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .hm-table th,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .ppm-seg-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-sel-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-item.selected,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sv-bf-formula,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sv-bf-table tbody tr:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sv-bf-table tbody tr:nth-child(even),
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tm-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tm-insight,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tm-pick-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .tm-pick-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .ua-snap-load{
+  background:#16324a!important; color:#90caf9!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bi-aksiyon-badge,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .bi-fishbone-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .breakdown-item.selected-for-multi,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cari-fishbone-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cohort-cell.c0,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cohort-cell.c1,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cohort-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cohort-insight,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .cohort-table td:first-child,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .gb-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .gb-insight,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .km-bf-formula,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .km-bf-match-yes,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .km-bf-table tbody tr:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .km-bf-table tbody tr:nth-child(even),
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .multi-analyze-bar button:hover{
+  background:#17351f!important; color:#a5d6a7!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .badge-orange,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sc-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sc-insight,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sc-pick-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sc-pick-panel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-controls,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .sk-insight{
+  background:#3b3314!important; color:#ffe082!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .badge-red,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .km-bf-match-no,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .radar-sel-btn-clear:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .ua-snap-del{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/uygunsuzluk-analizi"] .btn-reset:hover{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important;
+}/* toplam 163 secici,
+7 grup */
+
+/* -- supplier-system/balik-kilcigi ---------------------------------------------------- */
+/* toplam 0 secici,
+0 grup */
+
+/* -- supplier-system/5-neden-analizi ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .add-step-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .add-step-btn.nd,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .add-step-btn.nd:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .add-step-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ai-ptab,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .aib.back,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .aib.back:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .aib.cancel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .aib.cancel:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .api-test-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-input:focus,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-lbl,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-row-hdr,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-row:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-section-lbl.nd-lbl,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-section-lbl.os-lbl,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-status[data-v="bekliyor"],
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-status[data-v="devam"],
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .canvas-outer,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .consid-banner,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ctab .cbadge,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ctab.active,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ctab:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .legend,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .load-close-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .load-close-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .load-row,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .load-row:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .mbt.c,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .or-model-sel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .pbox,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .pbox.nd-t,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .print-meta,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .sa.add,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .sa.fork,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .uyg-table thead tr,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .uyg-tr:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .wiz-dot{
+  background:#16324a!important; color:#90caf9!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .actions-side,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ai-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .consid-tabs,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .lb.n,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .load-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .mb,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .meta-bar,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .sa,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .sbox,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .uyg-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .wiz-chip,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] body.embed-mode,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] body.embed-mode body{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .api-test-btn.err,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-status[data-v="iptal"],
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .lb.r,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .load-btn.del,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .rcb,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .sa.root,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .sbox.is-root{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-ai-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-pin-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .pin-btn:hover{
+  background:#3b3314!important; color:#ffe082!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .api-test-btn.ok,
+:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .ca-status[data-v="tamam"]{
+  background:#17351f!important; color:#a5d6a7!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/5-neden-analizi"] .consid-banner.sys{
+  background:#2e2140!important; color:#ce93d8!important;
+}/* toplam 64 secici,
+6 grup */
+
+/* -- supplier-system/8d-rapor ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .attach-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .attach-item,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .btn-back,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d1-team-member,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d3-action,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d4-link-card.empty,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d4-link-card.linked,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d4-root-cause,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d4m-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d4m-record:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d5-action,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d6-implementation,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d7-prevention,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .d8-participant,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .field-readonly,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .report-card,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .section-block,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .stat-card,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .supplier-cards{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .data-table tbody tr:nth-child(even),
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .form-footer,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .form-meta-bar,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .kv-table th,
+:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .tab-nav{
+  background:#16324a!important; color:#90caf9!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .status-open{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .status-inprogress{
+  background:#3b3314!important; color:#ffe082!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/8d-rapor"] .status-closed{
+  background:#17351f!important; color:#a5d6a7!important;
+}/* toplam 27 secici,
+5 grup */
+
+/* -- supplier-system/dof-yonetimi ---------------------------------------------------- */
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] #dashPrintTitle .pt-pill,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] #filterPresets,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-clear-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-clear-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-progress-bar-bg,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-ptab,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-status.info,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-test-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-test-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .aibadge,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .aibadge.empty,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .att-chip-empty,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .att-chip-empty:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .att-item,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .attall-row,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .attall-row:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .attall-rowlabel,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .badge-progress,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .cat-tag,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .cat-tags,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .dash-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .dash-scope,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .filter-bar,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .filter-toggle,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .filter-toggle:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .hm-dim-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .hm-row-label,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .hm-table th,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .hm-table th.hm-rowhead,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .quick-filters,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .snap-item,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .snap-item:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .stat-chip,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .upload-zone.drag,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .upload-zone:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] tbody tr:hover{
+  background:#16324a!important; color:#90caf9!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-cat-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .att-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .attall-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .dash-close,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .dash-kpi,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .dash-top5 li .t5-bar-bg,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .dc,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .fg input[type=date],
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .fg input[type=text],
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .fg select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .modal,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .qf input[type=date],
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .qf select,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .snap-box,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .stats-bar,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .upload-zone,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] table{
+  background:var(--k-yuzey)!important; color:var(--k-metin)!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-status.err,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .att-del-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .att-del-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .badge-late,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .dash-close:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .snap-del-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .snap-del-btn:hover{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] #dashPrintTitle .pt-pill.date,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .ai-status.ok,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .att-dl-btn,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .att-dl-btn:hover,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .badge-closed{
+  background:#17351f!important; color:#a5d6a7!important;
+}:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .badge-open,
+:root[data-theme="dark"][data-erp-mod="supplier-system/dof-yonetimi"] .filter-count{
+  background:#3b3314!important; color:#ffe082!important;
+}/* toplam 67 secici,
+5 grup */
+
+/* Modullerden toplanan ek satir ici zemin renkleri (tonuna gore) */
+:root[data-theme="dark"] [style*="#fee2e2"],
+:root[data-theme="dark"] [style*="#fff0f8"],
+:root[data-theme="dark"] [style*="#fff3f3"]{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}:root[data-theme="dark"] [style*="#ccfbf1"],
+:root[data-theme="dark"] [style*="#dbeafe"],
+:root[data-theme="dark"] [style*="#e0e7ff"],
+:root[data-theme="dark"] [style*="#e0f0ff"],
+:root[data-theme="dark"] [style*="#e0f2fe"],
+:root[data-theme="dark"] [style*="#e7f3ff"],
+:root[data-theme="dark"] [style*="#e8f4fd"],
+:root[data-theme="dark"] [style*="#eef2ff"],
+:root[data-theme="dark"] [style*="#eff6ff"],
+:root[data-theme="dark"] [style*="#f0f7ff"],
+:root[data-theme="dark"] [style*="#f1f5f9"],
+:root[data-theme="dark"] [style*="#f5f7ff"],
+:root[data-theme="dark"] [style*="#f8fbff"]{
+  background:#16324a!important; color:#90caf9!important;
+}:root[data-theme="dark"] [style*="#f3e0ff"],
+:root[data-theme="dark"] [style*="#f3e8ff"],
+:root[data-theme="dark"] [style*="#fdf5ff"]{
+  background:#2e2140!important; color:#ce93d8!important;
+}:root[data-theme="dark"] [style*="#e9ecef"]{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important;
+}:root[data-theme="dark"] [style*="#fef3c7"],
+:root[data-theme="dark"] [style*="#ffedd5"],
+:root[data-theme="dark"] [style*="#fffbeb"]{
+  background:#3b3314!important; color:#ffe082!important;
+}:root[data-theme="dark"] [style*="#dcfce7"],
+:root[data-theme="dark"] [style*="#e6f4ea"],
+:root[data-theme="dark"] [style*="#e8f5f1"],
+:root[data-theme="dark"] [style*="#ecfdf5"],
+:root[data-theme="dark"] [style*="#f0f9f4"],
+:root[data-theme="dark"] [style*="#f0fdf4"],
+:root[data-theme="dark"] [style*="#f1f8e9"],
+:root[data-theme="dark"] [style*="#fafffd"]{
+  background:#17351f!important; color:#a5d6a7!important;
+}

@@ -58,7 +58,10 @@ function parlaklik(c) {
 (async () => {
   let toplamKontrol = 0;
   for (const mod of moduller) {
-    let url = 'https://mycosmosshop.github.io/' + mod + '/';
+    // Kimlik 'klasor/dosya' ise .html sayfasina, degilse klasore git
+    let url = mod.includes('/')
+      ? 'https://mycosmosshop.github.io/' + mod + '.html'
+      : 'https://mycosmosshop.github.io/' + mod + '/';
     let s = await indir(url);
     // Bazi moduller index.html'den JS ile asil dosyaya yonlendiriyor (ornek:
     // kalite-kontrol -> kalite_kontrol.html). Izlenmezse modul "renksiz" gorunur.

@@ -12,9 +12,18 @@
 (function(){
   // Tema degisirken gecis animasyonlarini kisa sureligine kapat (yanip sonme onlenir).
   // Kural ortak CSS'te; kendi temasi olan modullerde de calissin diye burada da yazilir.
+  // Gecisi MASKELE: cok buyuk sayfalarda yeniden boyama parca parca ilerliyor
+  // ve tema "bolum bolum" iniyor gibi gorunuyor. Icerik 2 kare gizlenir.
   function gecisiKilitle(){
     try{
       var k = document.documentElement;
+      k.style.visibility = 'hidden';
+      clearTimeout(window.__erpMaskeZ);
+      var ac = function(){ k.style.visibility = ''; };
+      window.__erpMaskeZ = setTimeout(ac, 400);            // GUVENLIK: her kosulda geri ac
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        clearTimeout(window.__erpMaskeZ); ac();
+      }); });
       if(!document.getElementById('erpTemaGecisStil')){
         var st = document.createElement('style'); st.id = 'erpTemaGecisStil';
         st.textContent = ':root.tema-gecis,:root.tema-gecis *,:root.tema-gecis *::before,:root.tema-gecis *::after{'
@@ -27,7 +36,17 @@
     }catch(e){}
   }
   // Ortak CSS ENJEKTE EDILECEK moduller (kendi temasi olmayanlar)
-  var KOYU_MODULLER = ['kpi-takip', 'pscr', 'teknik-resim'];
+  var KOYU_MODULLER = [
+    'kpi-takip',
+    'pscr',
+    'teknik-resim',
+    'supplier-system/coa-arsiv',
+    'supplier-system/uygunsuzluk-analizi',
+    'supplier-system/balik-kilcigi',
+    'supplier-system/5-neden-analizi',
+    'supplier-system/8d-rapor',
+    'supplier-system/dof-yonetimi'
+  ];
   // KENDI tema sistemi olan moduller: CSS basilmaz, modulun kendi anahtari surulur.
   // (Ustune yazmak iki paleti karistirir: govde koyu, baslik/hover acik kalir.)
   var KENDI_TEMASI = {
@@ -38,7 +57,14 @@
   };
   var CSS_URL = 'https://mycosmosshop.github.io/erp-portal/erp-dark.css';
   try{
-    var yol = (location.pathname.split('/').filter(Boolean)[0] || '').toLowerCase();
+    // Kimlik: "klasor" ya da "klasor/dosya". Ayni depo altindaki farkli
+    // sayfalar (supplier-system/coa-arsiv gibi) ayri ayri ele alinabilsin;
+    // ana uygulamanin kendi temasiyla karismasin.
+    var parcalar = location.pathname.split('/').filter(Boolean);
+    var klasor = (parcalar[0] || '').toLowerCase();
+    var dosya = (parcalar[parcalar.length - 1] || '').toLowerCase()
+                  .replace(/\.html?$/, '').replace(/^index$/, '');
+    var yol = (dosya && dosya !== klasor) ? (klasor + '/' + dosya) : klasor;
 
     // ── Kendi temasi olan modul: yalnizca anahtarini sur ──
     if(KENDI_TEMASI[yol]){
