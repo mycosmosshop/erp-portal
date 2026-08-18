@@ -12,7 +12,7 @@
    localStorage anahtarı / postMessage). Modülün işlevine dokunulmaz.
    NOT: supplier-system kendi koyu temasını içinde taşır, listede DEĞİLDİR. */
 (function(){
-  var KOYU_MODULLER = ['kpi-takip'];
+  var KOYU_MODULLER = ['kpi-takip', 'pscr'];
   var CSS_URL = 'https://mycosmosshop.github.io/erp-portal/erp-dark.css';
   try{
     var yol = (location.pathname.split('/').filter(Boolean)[0] || '').toLowerCase();

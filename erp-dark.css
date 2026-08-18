@@ -74,27 +74,33 @@
 /* Anlamlı pastel zeminler: RENGİ KORU, yalnızca koyulaştır.
    (yeşil=iyi, kırmızı=sorun, sarı=uyarı, mavi=bilgi — anlam kaybolmasın) */
 :root[data-theme="dark"] [style*="#e8f5e9"],:root[data-theme="dark"] [style*="#c8e6c9"],
-:root[data-theme="dark"] [style*="#d4edda"],:root[data-theme="dark"] [style*="#f1f8f4"]{
+:root[data-theme="dark"] [style*="#d4edda"],:root[data-theme="dark"] [style*="#f1f8f4"],
+:root[data-theme="dark"] [style*="#eef7ec"],:root[data-theme="dark"] [style*="#c6efce"]{
   background:#17351f!important; color:#a5d6a7!important; }
 :root[data-theme="dark"] [style*="#e3f2fd"],:root[data-theme="dark"] [style*="#bbdefb"],
 :root[data-theme="dark"] [style*="#e0f2f1"],:root[data-theme="dark"] [style*="#b2dfdb"],
 :root[data-theme="dark"] [style*="#f0f8ff"],:root[data-theme="dark"] [style*="#f0f9ff"],
 :root[data-theme="dark"] [style*="#e1f5fe"],:root[data-theme="dark"] [style*="#e3f5ff"],
 :root[data-theme="dark"] [style*="#e8eaf6"],:root[data-theme="dark"] [style*="#f0f4ff"],
-:root[data-theme="dark"] [style*="#d1ecf1"]{
+:root[data-theme="dark"] [style*="#d1ecf1"],:root[data-theme="dark"] [style*="#e8f4ff"],
+:root[data-theme="dark"] [style*="#e8f6ff"],:root[data-theme="dark"] [style*="#d9e1f2"],
+:root[data-theme="dark"] [style*="#f0f4f8"]{
   background:#16324a!important; color:#90caf9!important; }
 :root[data-theme="dark"] [style*="#fff3cd"],:root[data-theme="dark"] [style*="#fff8e1"],
 :root[data-theme="dark"] [style*="#ffecb3"],:root[data-theme="dark"] [style*="#fffde7"],
 :root[data-theme="dark"] [style*="#fff9c4"],:root[data-theme="dark"] [style*="#fffbf0"],
-:root[data-theme="dark"] [style*="#fff3e0"],:root[data-theme="dark"] [style*="#ffe0b2"]{
+:root[data-theme="dark"] [style*="#fff3e0"],:root[data-theme="dark"] [style*="#ffe0b2"],
+:root[data-theme="dark"] [style*="#fff2cc"]{
   background:#3b3314!important; color:#ffe082!important; }
 :root[data-theme="dark"] [style*="#ffebee"],:root[data-theme="dark"] [style*="#f8d7da"],
 :root[data-theme="dark"] [style*="#ffcdd2"],:root[data-theme="dark"] [style*="#fdecea"],
 :root[data-theme="dark"] [style*="#ffe0e0"],:root[data-theme="dark"] [style*="#fff5f5"],
-:root[data-theme="dark"] [style*="#fce4ec"]{
+:root[data-theme="dark"] [style*="#fce4ec"],:root[data-theme="dark"] [style*="#fff0f0"],
+:root[data-theme="dark"] [style*="#ffdadb"]{
   background:#3c1d20!important; color:#ef9a9a!important; }
 :root[data-theme="dark"] [style*="#f3e5f5"],:root[data-theme="dark"] [style*="#e1bee7"],
-:root[data-theme="dark"] [style*="#ede7f6"]{
+:root[data-theme="dark"] [style*="#ede7f6"],:root[data-theme="dark"] [style*="#f3eef9"],
+:root[data-theme="dark"] [style*="#e2d4f0"]{
   background:#2e2140!important; color:#ce93d8!important; }
 
 /* Açık zemine göre yazılmış koyu metin renkleri aydınlatılır */
@@ -136,6 +142,7 @@
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-canvas,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-result-panel-out,
+:root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-results-panel,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-result-panel-tbl th,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .pa,
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .pa .badge,
@@ -145,4 +152,36 @@
 }
 :root[data-theme="dark"][data-erp-mod="kpi-takip"] .fta-palette-item:hover{
   background:var(--k-yuzey3)!important;
+}
+
+/* -- PSCR Akis Semasi -----------------------------------------------------
+   Akis semasinda renk ANLAM tasir (tetik / surec / aksiyon / rapor / portal).
+   Bu yuzden gri yapilmaz; her tur kendi tonunun koyu karsiligini alir. */
+:root[data-theme="dark"][data-erp-mod="pscr"] .node-trigger,
+:root[data-theme="dark"][data-erp-mod="pscr"] .node-portal,
+:root[data-theme="dark"][data-erp-mod="pscr"] .fc-blue,
+:root[data-theme="dark"][data-erp-mod="pscr"] .tbox h3,
+:root[data-theme="dark"][data-erp-mod="pscr"] .form-btn{
+  background:#16324a!important; color:#90caf9!important; border-color:#2c4c66!important;
+}
+:root[data-theme="dark"][data-erp-mod="pscr"] .node-process,
+:root[data-theme="dark"][data-erp-mod="pscr"] .fc-green{
+  background:#17351f!important; color:#a5d6a7!important;
+}
+:root[data-theme="dark"][data-erp-mod="pscr"] .node-action,
+:root[data-theme="dark"][data-erp-mod="pscr"] .fc-red{
+  background:#3c1d20!important; color:#ef9a9a!important;
+}
+:root[data-theme="dark"][data-erp-mod="pscr"] .node-report,
+:root[data-theme="dark"][data-erp-mod="pscr"] .fc-purple{
+  background:#2e2140!important; color:#ce93d8!important;
+}
+:root[data-theme="dark"][data-erp-mod="pscr"] .fc-proc,
+:root[data-theme="dark"][data-erp-mod="pscr"] .form-btn.proc{
+  background:#3b3314!important; color:#ffe082!important;
+}
+:root[data-theme="dark"][data-erp-mod="pscr"] .tl-bar-wrap,
+:root[data-theme="dark"][data-erp-mod="pscr"] .legend,
+:root[data-theme="dark"][data-erp-mod="pscr"] .timeline{
+  background:var(--k-yuzey2)!important; color:var(--k-metin)!important; border-color:var(--k-kenar)!important;
 }

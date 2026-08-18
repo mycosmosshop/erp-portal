@@ -66,6 +66,24 @@ function parlaklik(c) {
                     (/^#f{3,6}$/.test(renk) && css.includes('#fff'));
       if (!gecer) eksik.push(renk + ' (' + adet + ' yerde)');
     }
+    // <style> bloklarinda tanimli ACIK yuzeyler: nitelik secicileri bunlari
+    // yakalamaz, gercek sinif/eleman adiyla eslenmeleri gerekir.
+    const modCss = [...s.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(x => x[1]).join('\n')
+                     .replace(/\/\*[\s\S]*?\*\//g, '');   // yorumlar secici sanilmasin
+    const eksikSecici = [];
+    for (const r of modCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      const sec = r[1].trim(), gov = r[2];
+      if (!/background(-color)?\s*:\s*(#fff\b|#ffffff|white|#f9fafb|#f3f4f6|#f8f9fa|#f5f5f5|#f0f4f8)/i.test(gov)) continue;
+      const ana = sec.split(',')[0].trim().split(':')[0].trim();
+      if (!ana || ana.startsWith('@') || ana === 'body' || ana === 'html') continue;   // taban kural zaten var
+      if (!css.includes(ana.toLowerCase())) eksikSecici.push(ana);
+    }
+    if (eksikSecici.length) {
+      console.log('    <style> secicileri eslenmemis: ' + [...new Set(eksikSecici)].join(', '));
+    }
+    assert.strictEqual(eksikSecici.length, 0,
+      mod + ' modulunde ' + [...new Set(eksikSecici)].length + ' acik yuzey secicisi ortak temada ezilmiyor');
+
     toplamKontrol += kontrol;
     console.log('  ' + mod.padEnd(16) + ' acik zemin: ' + String(kontrol).padStart(2) +
                 (eksik.length ? '   ✘ eksik: ' + eksik.join(', ') : '   ✔'));
