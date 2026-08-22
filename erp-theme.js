@@ -51,9 +51,15 @@
   // KENDI tema sistemi olan moduller: CSS basilmaz, modulun kendi anahtari surulur.
   // (Ustune yazmak iki paleti karistirir: govde koyu, baslik/hover acik kalir.)
   var KENDI_TEMASI = {
-    'kalite-kontrol', 'kalite-kontrol/apqp': function(t){
+    // Iki anahtar TEK deger olmaz: 'a', 'b': f  gecersiz sozdizimi (SyntaxError)
+    // ve tum tema betigi yuklenmez. Her anahtar ayri yazilir.
+    'kalite-kontrol': function(t){
       if (typeof window.applyTheme === 'function'){ window.applyTheme(t); return true; }
       return false;                                  // modul JS'i henuz yuklenmedi
+    },
+    'kalite-kontrol/apqp': function(t){
+      if (typeof window.applyTheme === 'function'){ window.applyTheme(t); return true; }
+      return false;
     },
     // Bakim ve VDA 6.3 PORTALIN KONVANSIYONUNU kullaniyor: data-theme, koyu
     // varsayilan, [data-theme="light"] ile acik palet. Ortak CSS basmak iki
