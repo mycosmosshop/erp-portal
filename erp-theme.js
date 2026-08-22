@@ -51,7 +51,7 @@
   // KENDI tema sistemi olan moduller: CSS basilmaz, modulun kendi anahtari surulur.
   // (Ustune yazmak iki paleti karistirir: govde koyu, baslik/hover acik kalir.)
   var KENDI_TEMASI = {
-    'kalite-kontrol': function(t){
+    'kalite-kontrol', 'kalite-kontrol/apqp': function(t){
       if (typeof window.applyTheme === 'function'){ window.applyTheme(t); return true; }
       return false;                                  // modul JS'i henuz yuklenmedi
     },
