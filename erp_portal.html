@@ -356,18 +356,14 @@ const DEFAULT_MODULES = [
   { id:'kalibrasyon', ad:'Kalibrasyon Takip', aciklama:'Ekipman kalibrasyon periyotları, sertifikalar, sonraki tarih takibi.',
     ikon:'bi-rulers', renk:'#26c6da', kategori:'Bakım', kaynak:'https://mycosmosshop.github.io/kalibrasyon/', roller:['*'], yeniSekme:false, aktif:true },
 
-  // MEVZUAT RADAR — PANELIN KENDISI AGDAN ACILIR. Kullanici "iki yerde
-  // ugrasmak istemiyorum, tum islemler agda olsun" dedi: panel zaten bir
-  // web arayuzu, yalniz 127.0.0.1'e bagliydi. Artik ag adresine baglaniyor,
-  // butun islevler (RG tara, AI kontrol, portal taramalari, gozden gecirme,
-  // revizyon benimseme, Excel) TUM ic kullanicilarda ayni panelden calisir.
-  // Program mantigi degismedi — yalnizca dinleme adresi.
-  // yeniSekme: panel HTTP, portal HTTPS; tarayici karma icerigi iframe'de
-  // engelliyor, yeni sekmede sorunsuz acilir.
-  // ADRES: bilgisayar adi kullanilir (IP degisse de calisir). Panel kapaliysa
-  // sayfa acilmaz — o zaman panelin acik olmasi gerekir.
-  { id:'mevzuatradar', ad:'Mevzuat Radar', aciklama:'Dış kaynaklı doküman ve standart takibi — RG taraması, revizyon/iptal kontrolü, portal taramaları.',
-    ikon:'bi-broadcast-pin', renk:'#7e57c2', kategori:'Kalite', kaynak:'http://DESKTOP-TC3249U:8765/', roller:['*'], yeniSekme:true, aktif:true },
+  // MEVZUAT RADAR — BULUTTAN CALISIR. Liste ve islemler Supabase'de:
+  // panel acik olmasa da herkes ayni guncel listeyi gorur ve uzerinde
+  // calisir (gozden gecirme, revizyon benimseme, duzenleme, arsiv, ekleme,
+  // Excel). Taramalar (RG, VW/Daimler/MAN portallari, belge indirme) dis
+  // portallara oturum acip dosya indirdigi icin tarayicidan yapilamaz —
+  // onlar panelde/gorevde calisir ve sonuclarini buluta yazar.
+  { id:'mevzuatradar', ad:'Mevzuat Radar', aciklama:'Dış kaynaklı doküman ve standart takibi — revizyon/iptal durumu, gözden geçirme kayıtları.',
+    ikon:'bi-broadcast-pin', renk:'#7e57c2', kategori:'Kalite', kaynak:'https://mycosmosshop.github.io/mevzuat-radar/', roller:['*'], yeniSekme:false, aktif:true },
 
   { id:'kalitekontrol', ad:'Kalite Kontrol', aciklama:'Seri başı / proses / son kontrol kayıt sistemi.',
     ikon:'bi-clipboard2-check-fill', renk:'#66bb6a', kategori:'Kalite', kaynak:'https://mycosmosshop.github.io/kalite-kontrol/', roller:['*'], yeniSekme:false, aktif:true },
