@@ -438,7 +438,10 @@ function loadModules(){
     modules=saved.map(m=>{
       const d=DEFAULT_MODULES.find(x=>x.id===m.id);
       if(d && !m._custom){
-        return {...m, kaynak:d.kaynak, ad:d.ad, aciklama:d.aciklama, ikon:d.ikon, renk:d.renk, kategori:d.kategori, roller:d.roller};
+        // yeniSekme de koddan tazelenir: modul ilk eklendiginde nasil
+        // kaydedildiyse oyle kaliyordu; sonradan "cerceve icinde acilsin"
+        // yapilinca kullanicinin tarayicisinda degismiyordu.
+        return {...m, kaynak:d.kaynak, ad:d.ad, aciklama:d.aciklama, ikon:d.ikon, renk:d.renk, kategori:d.kategori, roller:d.roller, yeniSekme:d.yeniSekme};
       }
       return {...m};
     });
