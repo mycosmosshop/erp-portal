@@ -1181,7 +1181,14 @@ async function renderApprovals(){
   const body=document.getElementById('approveBody');
   const {data:rows,error}=await _sb.from('erp_users').select('*').order('created_at',{ascending:false});
   if(error){ body.innerHTML='<div style="color:var(--red)">Liste alınamadı: '+error.message+'</div>'; return; }
-  const pend=rows.filter(r=>!r.approved), appr=rows.filter(r=>r.approved);
+  const pend0=rows.filter(r=>!r.approved), appr=rows.filter(r=>r.approved);
+  // Tedarikci PPAP portalina uye olanlar da Supabase Auth hesabi actigi icin
+  // buraya dusuyordu; onlarin onayi PPAP panelinde veriliyor — burada gosterme.
+  let _tedSet=new Set();
+  try{ const {data:tk}=await _sb.from('ppap_kullanici').select('eposta');
+       (tk||[]).forEach(x=>x.eposta&&_tedSet.add(String(x.eposta).toLowerCase())); }catch(e){}
+  const pend=pend0.filter(r=>!_tedSet.has(String(r.email||'').toLowerCase()));
+  const _gizli=pend0.length-pend.length;
   window._usersById={}; rows.forEach(r=>{ window._usersById[r.id]=r; });
   const totalMods=modules.length;
   const rowHtml=(r,isAppr)=>`<div class="mgr-row" style="grid-template-columns:1fr auto">
@@ -1194,6 +1201,7 @@ async function renderApprovals(){
   body.innerHTML =
     `<div class="sb-cat" style="padding-left:0">⏳ Bekleyenler (${pend.length})</div>`+
     (pend.length?pend.map(r=>rowHtml(r,false)).join(''):'<div style="color:var(--muted);font-size:.82rem;margin:.3rem 0 .6rem">Bekleyen yok</div>')+
+    (_gizli?`<div style="color:var(--muted);font-size:.8rem;margin:.2rem 0 .6rem">🔗 ${_gizli} tedarikçi başvurusu burada gösterilmiyor — onayı <b>Tedarikçi PPAP Portalı</b>’nda verilir.</div>`:'')+
     `<div class="sb-cat" style="padding-left:0;margin-top:1rem">✅ Onaylılar (${appr.length})</div>`+
     appr.map(r=>rowHtml(r,true)).join('');
 }
