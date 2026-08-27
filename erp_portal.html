@@ -654,13 +654,16 @@ function _popIzle(){
 
 // ── Modül açma (iframe keep-alive) ──
 const _PORTAL_VER = Date.now();   // oturum başına sürüm damgası → modüller her oturumda güncel yüklenir (cache-bust)
-function launch(id){
+function launch(id, ek){
   const m=modules.find(x=>x.id===_base(id)); if(!m||!m.kaynak) return;
+  // ek: module tasinacak sorgu (ornegin '?ted=FIRMA') — baska bir modul
+  // ERP sekmesi olarak acilmasini isterse kullanilir.
   if(_popup[id] && !_popup[id].closed){ try{ _popup[id].focus(); }catch(e){} return; }   // ayrı pencerede açık
   if(!visibleFor(m)){ alert('Bu modüle yetkiniz yok.'); return; }   // kullanıcı-bazlı yetki
   closeMobile();
   if(window.innerWidth>860 && document.body.classList.contains('sb-unpinned')) document.body.classList.add('sb-collapsed');  // pin kapalıysa modül açınca menüyü gizle
-  if(m.yeniSekme){ window.open(m.kaynak,'_blank','noopener'); return; }
+  const kaynak = m.kaynak + (ek ? (m.kaynak.includes('?') ? '&' : '?') + ek.replace(/^[?&]/,'') : '');
+  if(m.yeniSekme){ window.open(kaynak,'_blank','noopener'); return; }
   currentId=id;
   document.getElementById('home').style.display='none';
   document.getElementById('frameHost').style.display='block';
@@ -672,11 +675,17 @@ function launch(id){
     wrap.dataset.mid=id;
     wrap.innerHTML=`<div class="frame-loading"><div class="spinner"></div><div>${m.ad} yükleniyor…</div></div>`;
     const ifr=document.createElement('iframe');
-    ifr.src=m.kaynak + (m.kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER;   // cache-bust: her oturumda guncel surum
+    ifr.src=kaynak + (kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER;   // cache-bust: her oturumda guncel surum
     ifr.addEventListener('load',()=>{ const l=wrap.querySelector('.frame-loading'); if(l) l.remove();
       temayiYay(aktifTema(), ifr); });                       // modul portalin temasiyla acilsin
     wrap.appendChild(ifr);
     document.getElementById('frameHost').appendChild(wrap);
+  }
+  else if(ek){
+    // Sekme zaten acik ama baska bir kayit istendi -> ayni sekmeyi tazele
+    const ifr=wrap.querySelector('iframe');
+    const yeni=kaynak + (kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER;
+    if(ifr && ifr.src!==yeni) ifr.src=yeni;
   }
   document.querySelectorAll('.frame-wrap').forEach(w=>w.classList.remove('show'));
   wrap.classList.add('show');
@@ -688,6 +697,21 @@ function launch(id){
   const nw=document.getElementById('tbNew'); nw.style.display=''; nw.href=m.kaynak;
   renderSidebar(); renderTabs();
 }
+// Bir modul baska bir modulu ERP SEKMESI olarak actirabilir (yeni tarayici
+// penceresi yerine). Ornek: onayli tedarikci listesindeki PPAP dugmesi.
+// Yalniz kendi originimizden gelen istek kabul edilir.
+window.addEventListener('message', e => {
+  if (e.origin !== location.origin) return;
+  const d = e.data;
+  if (!d || d.tip !== 'erp-modul-ac' || !d.modul) return;
+  const m = modules.find(x => x.id === d.modul);
+  if (!m) return;
+  launch(d.modul, typeof d.sorgu === 'string' ? d.sorgu : '');
+  // Istegi acan modul, portalin ESKI surumde olup olmadigini bilemez;
+  // onay gelmezse kendi yedegine (yeni pencere) duser.
+  try { e.source.postMessage({ tip: 'erp-modul-ac-tamam', modul: d.modul }, e.origin); } catch (x) {}
+});
+
 // ── Açık modül sekmeleri ──
 function renderTabs(){
   const host=document.getElementById('tbTabs'); if(!host) return;
