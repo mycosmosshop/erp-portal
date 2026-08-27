@@ -1139,11 +1139,24 @@ async function afterAuth(){
     ({data:row}=await _sb.from('erp_users').select('*').eq('id',user.id).maybeSingle());
   }
   _me=row||{id:user.id,email:user.email,approved:false,is_admin:false};
+  if(_me.reddedildi){ _showReddedildi(); return; }
   if(_me.approved) _enterPortal(); else _showPending();
 }
 window.afterAuth=afterAuth;
 function _showLogin(){ const g=document.getElementById('authGate'); if(g){ g.style.display='flex'; document.getElementById('authForm').style.display=''; document.getElementById('authPending').style.display='none'; document.getElementById('authSub').textContent='Devam etmek için giriş yapın'; } }
 function _showPending(){ const g=document.getElementById('authGate'); if(g){ g.style.display='flex'; document.getElementById('authForm').style.display='none'; document.getElementById('authPending').style.display=''; document.getElementById('authSub').textContent='Onay bekleniyor'; } }
+// Basvurusu kaldirilan kisi surekli 'onay bekleniyor' gormesin.
+function _showReddedildi(){
+  _showPending();
+  const s=document.getElementById('authSub'); if(s) s.textContent='Başvurunuz onaylanmadı';
+  const p=document.getElementById('authPending');
+  if(p) p.innerHTML='<div style="text-align:center;padding:.5rem 0">'
+    +'<div style="font-size:1.6rem">⛔</div>'
+    +'<b>Başvurunuz onaylanmadı.</b>'
+    +'<div style="color:var(--muted);font-size:.85rem;margin:.5rem 0 1rem">'
+    +'Erişim gerekiyorsa kalite bölümüyle görüşün.</div>'
+    +'<button onclick="authLogout()">Çıkış yap</button></div>';
+}
 function _enterPortal(){
   const g=document.getElementById('authGate'); if(g) g.remove();
   if(!_booted){ _booted=true; bootPortal(); injectAuthUI(); }
@@ -1187,7 +1200,8 @@ async function renderApprovals(){
   let _tedSet=new Set();
   try{ const {data:tk}=await _sb.from('ppap_kullanici').select('eposta');
        (tk||[]).forEach(x=>x.eposta&&_tedSet.add(String(x.eposta).toLowerCase())); }catch(e){}
-  const pend=pend0.filter(r=>!_tedSet.has(String(r.email||'').toLowerCase()));
+  const pend=pend0.filter(r=>!_tedSet.has(String(r.email||'').toLowerCase()) && !r.reddedildi);
+  const redd=pend0.filter(r=>r.reddedildi);
   const _gizli=pend0.length-pend.length;
   window._usersById={}; rows.forEach(r=>{ window._usersById[r.id]=r; });
   const totalMods=modules.length;
@@ -1197,13 +1211,26 @@ async function renderApprovals(){
     <div class="mgr-act" style="display:flex;gap:.3rem">${isAppr
       ? (r.id===_me.id?'<span style="color:var(--muted);font-size:.78rem">sen</span>'
         : `${r.is_admin?'':`<button onclick="openUserModules('${r.id}')" title="Modül yetkileri"><i class="bi bi-grid-1x2"></i> Modüller</button>`}<button onclick="setApprove('${r.id}',false)">Kaldır</button>`)
-      : `<button onclick="setApprove('${r.id}',true)" style="border-color:var(--green);color:var(--green)"><i class="bi bi-check-lg"></i> Onayla</button>`}</div></div>`;
+      : `<button onclick="setApprove('${r.id}',true)" style="border-color:var(--green);color:var(--green)"><i class="bi bi-check-lg"></i> Onayla</button>`+
+        `<button onclick="setReddet('${r.id}',true)" style="border-color:var(--red);color:var(--red)"><i class="bi bi-x-lg"></i> Kaldır</button>`}</div></div>`;
   body.innerHTML =
     `<div class="sb-cat" style="padding-left:0">⏳ Bekleyenler (${pend.length})</div>`+
     (pend.length?pend.map(r=>rowHtml(r,false)).join(''):'<div style="color:var(--muted);font-size:.82rem;margin:.3rem 0 .6rem">Bekleyen yok</div>')+
     (_gizli?`<div style="color:var(--muted);font-size:.8rem;margin:.2rem 0 .6rem">🔗 ${_gizli} tedarikçi başvurusu burada gösterilmiyor — onayı <b>Tedarikçi PPAP Portalı</b>’nda verilir.</div>`:'')+
+    (redd.length?`<div class="sb-cat" style="padding-left:0;margin-top:1rem">⛔ Kaldırılanlar (${redd.length})</div>`+
+      redd.map(r=>`<div class="mgr-row" style="grid-template-columns:1fr auto"><div style="min-width:0">
+        <div class="nm" style="color:var(--muted)">${r.email||r.id}</div>
+        <div class="sub">${r.created_at?new Date(r.created_at).toLocaleString('tr-TR'):''}</div></div>
+        <div class="mgr-act"><button onclick="setReddet('${r.id}',false)">↩ Geri al</button></div></div>`).join(''):'')+
     `<div class="sb-cat" style="padding-left:0;margin-top:1rem">✅ Onaylılar (${appr.length})</div>`+
     appr.map(r=>rowHtml(r,true)).join('');
+}
+async function setReddet(id,val){
+  if(val && !confirm('Bu başvuru kaldırılsın mı?\n\nKişi bir daha "onay bekleniyor" ekranında asılı kalmaz; '
+    +'giriş yaptığında başvurusunun onaylanmadığını görür. Geri alabilirsiniz.')) return;
+  const {error}=await _sb.from('erp_users').update({reddedildi:val}).eq('id',id);
+  if(error){ alert('Hata: '+error.message); return; }
+  renderApprovals();
 }
 async function setApprove(id,val){
   const {error}=await _sb.from('erp_users').update({approved:val}).eq('id',id);
@@ -1240,7 +1267,7 @@ async function saveUserModules(uid){
   const md=bootstrap.Modal.getInstance(document.getElementById('userModModal')); if(md) md.hide();
   renderApprovals();
 }
-window.openApprovals=openApprovals; window.setApprove=setApprove;
+window.openApprovals=openApprovals; window.setApprove=setApprove; window.setReddet=setReddet;
 window.openUserModules=openUserModules; window.saveUserModules=saveUserModules;
 
 // ── Açılış: önce giriş kapısı ──
