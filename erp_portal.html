@@ -1221,9 +1221,20 @@ async function renderApprovals(){
       redd.map(r=>`<div class="mgr-row" style="grid-template-columns:1fr auto"><div style="min-width:0">
         <div class="nm" style="color:var(--muted)">${r.email||r.id}</div>
         <div class="sub">${r.created_at?new Date(r.created_at).toLocaleString('tr-TR'):''}</div></div>
-        <div class="mgr-act"><button onclick="setReddet('${r.id}',false)">↩ Geri al</button></div></div>`).join(''):'')+
+        <div class="mgr-act" style="display:flex;gap:.3rem"><button onclick="setReddet('${r.id}',false)">↩ Geri al</button>
+        <button onclick="silKullanici('${r.id}',${JSON.stringify(r.email||'')})" style="border-color:var(--red);color:var(--red)"><i class="bi bi-trash"></i> Sil</button></div></div>`).join(''):'')+
     `<div class="sb-cat" style="padding-left:0;margin-top:1rem">✅ Onaylılar (${appr.length})</div>`+
     appr.map(r=>rowHtml(r,true)).join('');
+}
+// Kaldirilan kaydi tablodan tamamen siler. RLS delete izni yoksa
+// PostgREST sessizce 0 satir siler; .select() ile ne silindigini
+// olcup kullaniciya dogru sonucu soyluyoruz.
+async function silKullanici(id,eposta){
+  if(!confirm((eposta||id)+' kaydı tablodan SİLİNSİN mi?'+String.fromCharCode(10)+String.fromCharCode(10)+'Geri alınamaz. Bu kişi yeniden giriş yaparsa sıfırdan başvurmuş olur.')) return;
+  const {data,error}=await _sb.from('erp_users').delete().eq('id',id).select();
+  if(error){ alert('Silinemedi: '+error.message); return; }
+  if(!data||!data.length){ alert('Silinemedi — bu kayıt için silme yetkiniz yok (RLS kuralı).'+String.fromCharCode(10)+'Kayıt "Kaldırılanlar"da duruyor, kimse giriş yapamaz.'); return; }
+  renderApprovals();
 }
 async function setReddet(id,val){
   if(val && !confirm('Bu başvuru kaldırılsın mı?\n\nKişi bir daha "onay bekleniyor" ekranında asılı kalmaz; '
@@ -1267,7 +1278,7 @@ async function saveUserModules(uid){
   const md=bootstrap.Modal.getInstance(document.getElementById('userModModal')); if(md) md.hide();
   renderApprovals();
 }
-window.openApprovals=openApprovals; window.setApprove=setApprove; window.setReddet=setReddet;
+window.openApprovals=openApprovals; window.setApprove=setApprove; window.setReddet=setReddet; window.silKullanici=silKullanici;
 window.openUserModules=openUserModules; window.saveUserModules=saveUserModules;
 
 // ── Açılış: önce giriş kapısı ──
