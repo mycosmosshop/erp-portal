@@ -1257,7 +1257,7 @@ async function silKullanici(id,eposta){
   if(!confirm((eposta||id)+' kaydı tablodan SİLİNSİN mi?'+String.fromCharCode(10)+String.fromCharCode(10)+'Geri alınamaz. Bu kişi yeniden giriş yaparsa sıfırdan başvurmuş olur.')) return;
   const {data,error}=await _sb.from('erp_users').delete().eq('id',id).select();
   if(error){ alert('Silinemedi: '+error.message); return; }
-  if(!data||!data.length){ alert('Silinemedi — bu kayıt için silme yetkiniz yok (RLS kuralı).'+String.fromCharCode(10)+'Kayıt "Kaldırılanlar"da duruyor, kimse giriş yapamaz.'); return; }
+  if(!data||!data.length){ console.warn('erp_users DELETE 0 satir — RLS politikasi yok olabilir'); alert('Silinemedi — veritabanı silme izni yok (RLS).'+String.fromCharCode(10)+String.fromCharCode(10)+'Cozum: Supabase SQL Editor'+String.fromCharCode(39)+'de KULLANICI_SIL.sql calistirilmali.'+String.fromCharCode(10)+'Kayit "Kaldirilanlar"da duruyor; o kisi zaten giris yapamaz.'); return; }
   renderApprovals();
 }
 async function setReddet(id,val){
