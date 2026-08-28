@@ -1246,7 +1246,7 @@ async function renderApprovals(){
         <div class="nm" style="color:var(--muted)">${r.email||r.id}</div>
         <div class="sub">${r.created_at?new Date(r.created_at).toLocaleString('tr-TR'):''}</div></div>
         <div class="mgr-act" style="display:flex;gap:.3rem"><button onclick="setReddet('${r.id}',false)">↩ Geri al</button>
-        <button onclick="silKullanici('${r.id}',${JSON.stringify(r.email||'')})" style="border-color:var(--red);color:var(--red)"><i class="bi bi-trash"></i> Sil</button></div></div>`).join(''):'')+
+        <button onclick="silKullanici('${r.id}','${String(r.email||'').replace(/\'/g,"\\\'").replace(/"/g,'&quot;')}')" style="border-color:var(--red);color:var(--red)"><i class="bi bi-trash"></i> Sil</button></div></div>`).join(''):'')+
     `<div class="sb-cat" style="padding-left:0;margin-top:1rem">✅ Onaylılar (${appr.length})</div>`+
     appr.map(r=>rowHtml(r,true)).join('');
 }
