@@ -661,7 +661,18 @@ function _popIzle(){
 }
 
 // ── Modül açma (iframe keep-alive) ──
-const _PORTAL_VER = Date.now();   // oturum başına sürüm damgası → modüller her oturumda güncel yüklenir (cache-bust)
+// ÖNCEDEN: her oturumda Date.now() eklenip modül adresine yazılıyordu.
+// Sonuç: tarayıcı önbelleği HİÇ kullanılmıyordu — 2 MB'lık onaylı tedarikçi
+// listesi her açılışta yeniden iniyordu (ölçüm: yavaş hatta ~14 sn, bazen
+// daha uzun). Artık normal açılış önbellekten gelir; GitHub Pages'in
+// max-age=600 + ETag doğrulaması güncelliği zaten sağlar (değişmediyse 304,
+// birkaç yüz bayt). Güncel sürümü ZORLAMAK için "Yenile" düğmesi var.
+const _PORTAL_VER = Date.now();   // yalnızca elle yenilemede kullanılır
+// Modül adresi: normalde damgasız (önbellek çalışsın), yenilemede damgalı.
+function _modulAdresi(kaynak, tazele) {
+    if (!tazele) return kaynak;
+    return kaynak + (kaynak.includes('?') ? '&' : '?') + 'v=' + Date.now();
+}
 function launch(id, ek){
   const m=modules.find(x=>x.id===_base(id)); if(!m||!m.kaynak) return;
   // ek: module tasinacak sorgu (ornegin '?ted=FIRMA') — baska bir modul
@@ -683,7 +694,7 @@ function launch(id, ek){
     wrap.dataset.mid=id;
     wrap.innerHTML=`<div class="frame-loading"><div class="spinner"></div><div>${m.ad} yükleniyor…</div></div>`;
     const ifr=document.createElement('iframe');
-    ifr.src=kaynak + (kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER;   // cache-bust: her oturumda guncel surum
+    ifr.src=_modulAdresi(kaynak);   // damgasız: önbellek kullanılsın
     ifr.addEventListener('load',()=>{ const l=wrap.querySelector('.frame-loading'); if(l) l.remove();
       temayiYay(aktifTema(), ifr); });                       // modul portalin temasiyla acilsin
     wrap.appendChild(ifr);
@@ -692,7 +703,7 @@ function launch(id, ek){
   else if(ek){
     // Sekme zaten acik ama baska bir kayit istendi -> ayni sekmeyi tazele
     const ifr=wrap.querySelector('iframe');
-    const yeni=kaynak + (kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER;
+    const yeni=_modulAdresi(kaynak);
     if(ifr && ifr.src!==yeni) ifr.src=yeni;
   }
   document.querySelectorAll('.frame-wrap').forEach(w=>w.classList.remove('show'));
@@ -765,7 +776,7 @@ function closeTab(id, ev){
 function popOut(mid, ev){
   if(ev){ ev.stopPropagation(); ev.preventDefault(); }
   const m=modules.find(x=>x.id===_base(mid)); if(!m||!m.kaynak) return;
-  const w=window.open(m.kaynak + (m.kaynak.includes('?')?'&':'?') + 'v=' + _PORTAL_VER,
+  const w=window.open(_modulAdresi(m.kaynak),
                       'erp_' + mid.replace(/[^a-zA-Z0-9]/g,'_'),
                       'width=1400,height=900,menubar=no,toolbar=no');
   if(!w){ alert('Tarayıcı açılır pencereyi engelledi.\nAdres çubuğundaki engelleme simgesinden bu siteye izin verin.'); return; }
@@ -814,7 +825,10 @@ function reloadCurrent(){
       const l=document.createElement('div'); l.className='frame-loading';
       l.innerHTML=`<div class="spinner"></div><div>${m.ad} yenileniyor…</div>`; wrap.appendChild(l);
       ifr.addEventListener('load',()=>l.remove(),{once:true}); }
-    ifr.src=src; }
+    // Yenile = güncel sürümü ZORLA: damga burada eklenir (adres damgalıysa
+    // eskisi atılır), böylece normal açılışlar önbellekten hızlı gelirken
+    // kullanıcı istediğinde en yeni sürümü alabilir.
+    ifr.src=_modulAdresi(src.replace(/([?&])v=\d+(&|$)/, '$1').replace(/[?&]$/, ''), true); }
 }
 function fullscreenCurrent(){
   const wrap=document.querySelector(`.frame-wrap[data-mid="${currentId}"]`);
