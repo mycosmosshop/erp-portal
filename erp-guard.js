@@ -23,10 +23,21 @@
   try{ de.style.visibility = 'hidden'; }catch(e){}
   function deny(){ try{ location.replace(PORTAL); }catch(e){ location.href = PORTAL; } }
   function allow(){ try{ de.style.visibility = ''; }catch(e){} }
+  function yedekYukle(){
+    if(window.__erpYedekDenendi){ return deny(); }   // bir kez dene, dongu olmasin
+    window.__erpYedekDenendi = true;
+    var s = document.createElement('script');
+    s.src = 'https://unpkg.com/@supabase/supabase-js@2';
+    s.onload = function(){ check(); };
+    s.onerror = function(){ deny(); };
+    (document.head || document.documentElement).appendChild(s);
+  }
   function check(){
     // Modül kendi istisnasını tanımladıysa (ör. supplier paylaşım linkleri) girişsiz geç
     try{ if(typeof window.ERP_GUARD_ALLOW === 'function' && window.ERP_GUARD_ALLOW()){ return allow(); } }catch(e){}
-    if(!(window.supabase && window.supabase.createClient)){ return deny(); }
+    // Kutuphane yoksa once YEDEK CDN denenir; tek CDN kesintisinde
+    // butun moduller giris ekranina dusuyordu.
+    if(!(window.supabase && window.supabase.createClient)){ return yedekYukle(); }
     var sb;
     try{ sb = window.supabase.createClient(SUPA_URL, SUPA_KEY); }catch(e){ return deny(); }
     sb.auth.getSession().then(function(res){

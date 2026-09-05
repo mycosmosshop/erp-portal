@@ -9,6 +9,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  /* jsdelivr'a ulasilamazsa (gecici kesinti / kurumsal filtre) YEDEK CDN.
+     document.write SENKRON yukler: sonraki betikler window.supabase'i hazir bulur.
+     Tek CDN'e bagli kalindiginda portal "null (reading 'auth')" hatasi veriyordu. */
+  if (!(window.supabase && window.supabase.createClient)) {
+    document.write('<scr' + 'ipt src="https://unpkg.com/@supabase/supabase-js@2"><' + '/scr' + 'ipt>');
+  }
+</script>
 <style>
 :root{
   --bg:#0d1117; --bg2:#090c10; --card:#161b22; --bg3:#121821;
@@ -1097,6 +1105,9 @@ async function authSubmit(){
   const pass=document.getElementById('authPass').value;
   if(!email||!pass){ _authMsg('E-posta ve şifre gerekli.',true); return; }
   const btn=document.getElementById('authPrimary'); btn.disabled=true;
+  // _sb yoksa (kutuphane yuklenemedi) asagidaki cagri "null (reading 'auth')"
+  // hatasi veriyordu; kullanici ne yapacagini anlamiyordu.
+  if(!_sb){ _authMsg('Supabase kütüphanesi yüklenemedi — sayfayı yenileyip tekrar deneyin.',true); btn.disabled=false; return; }
   try{
     if(_authMode==='register'){
       const {error}=await _sb.auth.signUp({email,password:pass}); if(error) throw error;
@@ -1308,7 +1319,10 @@ window.openUserModules=openUserModules; window.saveUserModules=saveUserModules;
 // ── Açılış: önce giriş kapısı ──
 (async function(){
   document.body.insertAdjacentHTML('beforeend', _gateHtml());
-  if(!(window.supabase && window.supabase.createClient)){ _authMsg('Supabase yüklenemedi (internet?).',true); return; }
+  if(!(window.supabase && window.supabase.createClient)){
+    _authMsg('Supabase kütüphanesi yüklenemedi — internet/ağ engeli olabilir. Sayfayı yenileyin.',true);
+    return;
+  }
   _sb = window.supabase.createClient(ERP_SB_URL, ERP_SB_KEY, {auth:{persistSession:true, autoRefreshToken:true}});
   _sb.auth.onAuthStateChange(function(ev){ if(ev==='PASSWORD_RECOVERY'){ _showNewPasswordForm(); } });
   try{
