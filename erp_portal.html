@@ -334,6 +334,10 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 //  (silmedikleri sürece) otomatik görünür.
 // ══════════════════════════════════════════════════════════════
 const DEFAULT_MODULES = [
+  // EN SOLDA: ERP'de otomatik üretilen kalite kontrol kayıtlarını LeanSys görünümünde gösteren salt-okunur pencere
+  { id:'kalitekayitlari', ad:'Kalite Kayıtları', aciklama:'Giriş / seri başı / proses / son kontrol kayıtları — LeanSys görünümünde salt okuma.',
+    ikon:'bi-journal-check', renk:'#3c8dbc', kategori:'Kalite', kaynak:'https://mycosmosshop.github.io/kalite-kontrol/kalite_kayitlari.html', roller:['*'], yeniSekme:false, aktif:true },
+
   { id:'bakim', ad:'Bakım Yönetim Sistemi', aciklama:'CMMS — makineler, arızalar, planlı bakım, iş emirleri, OEE, raporlar.',
     ikon:'bi-tools', renk:'#0288d1', kategori:'Bakım', kaynak:'https://mycosmosshop.github.io/bakim-yonetim-sistemi/bakim_yonetim_sistemi.html', roller:['*'], yeniSekme:false, aktif:true },
 
