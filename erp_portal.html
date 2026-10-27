@@ -1220,6 +1220,12 @@ function _showReddedildi(){
     +'<button onclick="authLogout()">Çıkış yap</button></div>';
 }
 function _enterPortal(){
+  // Modülden giriş için gelindiyse (erp-guard.js) giriş sonrası o modüle dön; yalnız bu sitedeki adresler.
+  try{
+    var d=sessionStorage.getItem('erp_donus');
+    if(d){ sessionStorage.removeItem('erp_donus');
+      if(/^https:\/\/mycosmosshop\.github\.io\//.test(d) && d.indexOf('/erp-portal/erp_portal.html')<0){ location.replace(d); return; } }
+  }catch(e){}
   const g=document.getElementById('authGate'); if(g) g.remove();
   if(!_booted){ _booted=true; bootPortal(); injectAuthUI(); }
 }

@@ -21,7 +21,8 @@
   var de = document.documentElement;
   // İçeriği doğrulanana kadar gizle (içerik sızıntısı/flaş olmasın)
   try{ de.style.visibility = 'hidden'; }catch(e){}
-  function deny(){ try{ location.replace(PORTAL); }catch(e){ location.href = PORTAL; } }
+  // Girişten sonra portal kullanıcıyı geldiği modüle geri gönderir (aynı sekme; erp_portal.html _enterPortal).
+  function deny(){ try{ sessionStorage.setItem('erp_donus', location.href); }catch(e){} try{ location.replace(PORTAL); }catch(e){ location.href = PORTAL; } }
   function allow(){ try{ de.style.visibility = ''; }catch(e){} }
   function yedekYukle(){
     if(window.__erpYedekDenendi){ return deny(); }   // bir kez dene, dongu olmasin
